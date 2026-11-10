@@ -16,17 +16,18 @@ affiliated with or endorsed by Screenly.
 - Google Analytics, Sentry and player telemetry are removed (`kit/src/analytics.ts`, and
   stripped from the built HTML). The apps send nothing to Screenly or Google.
 - Paths are rewritten so every app can live in a sub-folder of one Pages site.
-- `clock` was a Cloudflare Worker; it is rendered to static HTML at build time with a fixed
-  location (US, America/New_York — see `SSR` in `build.mjs`).
+- `clock` and `moon` were Cloudflare Workers; they are rendered to static HTML at build time
+  (see `SSR` in `build.mjs`). Clock uses US / America/New_York. Moon defaults to Kingston, NY;
+  its per-screen Location setting still works, read from the URL in the browser.
 - Each app's manifest points at this site instead of `*.srly.io`.
 
 ## Apps
 
-birthday, capitals, clock, menu-board, missing-children, on-this-day, opening-hours, quotes,
-team-milestone, timer, word, world-clock.
+birthday, capitals, clock, menu-board, missing-children, moon, on-this-day, opening-hours,
+quotes, team-milestone, timer, word, world-clock.
 
 Not included (they need a server, an API key or a scheduled scraper): air quality, weather,
-RSS, moon, Product Hunt, Silver Alert.
+RSS, Product Hunt, Silver Alert.
 
 ## Publishing
 

@@ -29,7 +29,9 @@ const only = process.argv.slice(2)
 // Worker-based apps that are rendered to static HTML here instead of by Cloudflare.
 const SSR = {
   // Rendered once with a fixed location; the clock itself runs client-side.
-  clock: { country: 'US', timezone: 'America/New_York' }
+  clock: { props: 'env="" country="US" timezone="America/New_York"' },
+  // Default location Kingston, NY; a screen can override it with the Location setting.
+  moon: { props: 'lat="41.93" lng="-74.00" city="Kingston" country="United States" timezone="America/New_York"' }
 }
 
 rmSync(SITE, { recursive: true, force: true })
@@ -103,10 +105,9 @@ for (const id of apps) {
 
     if (SSR[id]) {
       // Render the Worker's page once, then serve its assets statically.
-      const { country, timezone } = SSR[id]
       const render = `
         import App from './src/components/App'
-        const html = (<App env="" country="${country}" timezone="${timezone}" v="${Date.now().toString(36)}" />).toString()
+        const html = (<App ${SSR[id].props} v="${Date.now().toString(36)}" />).toString()
         await Bun.write('dist/index.html', await html)
       `
       writeFileSync(join(dir, '.render.jsx'), render)
