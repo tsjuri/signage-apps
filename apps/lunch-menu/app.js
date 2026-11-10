@@ -165,6 +165,41 @@
   }
   var DEFAULT_IMAGES = ['fruit.svg', 'tacos.svg', 'burger.svg', 'salad.svg', 'pizza.svg']
 
+  // ---------- banner photos from the feed's Drive folder ----------
+  // When the Apps Script feed has a photo folder, its photos replace the images
+  // picked in the settings. Up to five are shown; with more, a different five
+  // each day (the window moves along the name-sorted list).
+  var PHOTO_KEY = 'lunch-menu:photos:' + get('source')
+  function showPhotos(list) {
+    if (!list || !list.length) return false
+    var n = list.length
+    var start = n > 5 ? (Math.floor(Date.now() / 864e5) * 5) % n : 0
+    for (var i = 0; i < 5; i++) {
+      var img = $('img' + (i + 1))
+      if (i < n) img.src = list[(start + i) % n].src
+      else img.removeAttribute('src')
+    }
+    return true
+  }
+  function loadPhotos() {
+    if (!get('source')) return
+    try { showPhotos(JSON.parse(localStorage.getItem(PHOTO_KEY) || 'null')) } catch (e) {}
+    var url = get('source')
+    url += (url.indexOf('?') < 0 ? '?' : '&') + 'photos=1'
+    fetch(url, { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('photos ' + r.status); return r.json() })
+      .then(function (j) {
+        var list = (j.photos || []).filter(function (p) { return p && /^data:image\//.test(p.src) })
+        if (showPhotos(list)) {
+          try { localStorage.setItem(PHOTO_KEY, JSON.stringify(list)) } catch (e) {}
+        } else {
+          try { localStorage.removeItem(PHOTO_KEY) } catch (e) {}
+          renderBanner() // folder emptied or not set: back to the picked images
+        }
+      })
+      .catch(function () {}) // keep whatever is showing
+  }
+
   function render(days, data) {
     var box = $('days')
     box.style.setProperty('--cols', days.length)
@@ -247,14 +282,16 @@
   function scheduleMidnight() {
     var now = new Date()
     var next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 30)
-    setTimeout(function () { refresh(); scheduleMidnight() }, next - now)
+    setTimeout(function () { refresh(); loadPhotos(); scheduleMidnight() }, next - now)
   }
 
   function start() {
     renderBanner()
     var go = function () {
       refresh()
+      loadPhotos()
       setInterval(refresh, REFRESH_MS)
+      setInterval(loadPhotos, 3 * 60 * 60 * 1000)
       scheduleMidnight()
       window.addEventListener('resize', function () { if (lastData) render(currentDays, lastData) })
     }

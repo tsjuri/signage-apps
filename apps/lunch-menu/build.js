@@ -28,6 +28,7 @@ const label = (f) => f.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').replace(/\
 const imageSetting = (n, def) => ({
   type: 'string',
   title: `Banner image ${n}`,
+  ...(n === 1 ? { description: 'Ignored when the calendar feed has a photo folder: then the photos in that Drive folder are shown.' } : {}),
   default: images.includes(def) ? def : '',
   enum: ['none', ...images],
   'x-enumLabels': ['(none)', ...images.map(label)]
@@ -39,7 +40,7 @@ const manifest = {
   id: 'lunch-menu',
   name: 'Lunch Menu',
   description:
-    'A lunch menu for the next five school days, read from a Google Calendar and rolling forward every day so the left column is always today. A banner of food photos frames the title. Enter each day as one all-day event: the dish in the title, sides in the description, one per line.',
+    'A lunch menu for the next five school days, read from a Google Calendar and rolling forward every day so the left column is always today. A banner of food photos frames the title. Enter each day as one all-day event: the dish in the title, sides in the description, one per line. Banner photos can come from a shared Google Drive folder.',
   summary: 'This week’s school lunches, straight from the calendar.',
   tags: ['Menu', 'School', 'Calendar'],
   playback: { pacing: 'fixed', refreshIntervalS: 3600 },
