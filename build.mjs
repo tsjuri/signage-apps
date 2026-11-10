@@ -120,9 +120,13 @@ for (const id of apps) {
 
     cpSync(join(dir, 'dist'), out, { recursive: true })
     postProcess(id, out)
-    const manifestSrc = existsSync(join(dir, 'signage-app.json'))
-      ? join(dir, 'signage-app.json')
-      : join(dir, '.well-known/signage-app.json')
+    // Manifest source, first that exists: Worker apps' signage-app.json, a static
+    // app's checked-in .well-known, or one the app's own build generated.
+    const manifestSrc = [
+      join(dir, 'signage-app.json'),
+      join(dir, '.well-known/signage-app.json'),
+      join(out, '.well-known/signage-app.json')
+    ].find((p) => existsSync(p))
     writeManifest(id, manifestSrc, out)
     index.push({ id, manifest: `${ORIGIN}${BASE}/${id}/.well-known/signage-app.json` })
     console.log(`✓ ${id}`)
@@ -137,6 +141,8 @@ writeFileSync(
   `${JSON.stringify({ apps: index, indexVersion: '1', updated: new Date().toISOString() }, null, 2)}\n`
 )
 writeFileSync(join(SITE, '.nojekyll'), '')
+// Shared images (banner photos etc.), served at <site>/media/<file>.
+if (existsSync(join(ROOT, 'media'))) cpSync(join(ROOT, 'media'), join(SITE, 'media'), { recursive: true })
 writeFileSync(
   join(SITE, 'index.html'),
   `<!doctype html><meta charset="utf-8"><title>signage-apps</title>

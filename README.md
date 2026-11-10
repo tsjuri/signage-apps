@@ -23,7 +23,10 @@ affiliated with or endorsed by Screenly.
 
 ## Apps
 
-birthday, capitals, clock, menu-board, missing-children, moon, on-this-day, opening-hours,
+**Our own:** lunch-menu (five rolling school days from a Google Calendar, banner images
+picked from `media/`; see `apps/lunch-menu/apps-script/` for a private calendar).
+
+**Adapted from Screenly-Labs:** birthday, capitals, clock, menu-board, missing-children, moon, on-this-day, opening-hours,
 quotes, team-milestone, timer, word, world-clock.
 
 Not included (they need a server, an API key or a scheduled scraper): air quality, weather,
@@ -52,6 +55,12 @@ service and restarts it. **Re-run it after every Anthias upgrade**, which regene
 `docker-compose.yml`. Source: `stick/apply-catalog.sh`.
 
 Assets already added keep working either way: an installed app is stored as its full URL.
+
+## Banner images (`media/`)
+
+Upload photos to `media/` (github.com → Add file → Upload files) and push. They are published
+at `<site>/media/` and appear in the Lunch Menu's image dropdowns after the next build.
+Square photos work best; they are shown as round plates.
 
 ## Adding or changing an app
 

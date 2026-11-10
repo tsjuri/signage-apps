@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lunch Menu</title>
+    <link rel="stylesheet" href="styles.css?v=__V__" />
+    <script src="app.js?v=__V__" defer></script>
+  </head>
+  <body>
+    <main class="board">
+      <header class="banner">
+        <div class="plates plates--left">
+          <img class="plate p1" id="img1" alt="" />
+          <img class="plate p2" id="img2" alt="" />
+          <img class="plate p3" id="img3" alt="" />
+        </div>
+        <div class="title">
+          <p class="title__eyebrow" id="eyebrow">Calendar</p>
+          <h1 class="title__heading" id="heading">Lunch<br />Menu</h1>
+        </div>
+        <div class="plates plates--right">
+          <img class="plate p4" id="img4" alt="" />
+          <img class="plate p5" id="img5" alt="" />
+        </div>
+      </header>
+      <div class="rule"></div>
+      <section class="days" id="days" aria-live="polite"></section>
+      <p class="status" id="status" hidden></p>
+    </main>
+  </body>
+</html>
