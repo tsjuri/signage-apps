@@ -1,0 +1,72 @@
+/* =========================================================================
+   Base signage preset — the shared foundation every app @imports, then overrides.
+   Pulls in Tailwind, sets the shared brand token(s), the orientation-neutral fluid
+   root, the resets every app repeats, and the degraded-mode kill-switch.
+
+   Apps import this FIRST, then add their OWN @theme block (palette + display font)
+   and component styles. The design identity stays per-app — only the plumbing and
+   the brand chrome are shared.
+   ========================================================================= */
+/* The app must `@import "tailwindcss"` itself BEFORE this preset — Tailwind
+   resolves that import relative to the app, not this package. */
+@import "./degraded.css";
+@import "./signage-reset.css";
+
+@theme {
+  /* Brand chrome only (masthead pip, CTA, logo lockup) — NOT the card/content
+     accents, which each app owns. Apps may override the display/body fonts. */
+  --color-brand: #6b4eff;
+  /* Hairline used by shared chrome (masthead rule, dividers). Apps override. */
+  --color-hairline: rgb(255 255 255 / 0.12);
+  /* Font-family tokens. --font-sans is the body default; apps pick which family
+     backs --font-display / --font-mono (the faces ship in styles/fonts.css).
+     Referenced families still need their @font-face — @import that sheet. */
+  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* Stacking order for the layers every photo-backed app ends up with. Apps were
+     hardcoding 0-4 independently, so a shared scale keeps a scrim from landing on
+     top of the content it is meant to sit under.
+
+     The `--z-index-*` prefix is deliberate: it is Tailwind v4's own namespace, so
+     these both emit as custom properties AND generate `z-backdrop` / `z-content`
+     utilities. A tidier-looking `--z-backdrop` sits in no namespace Tailwind
+     recognises and is silently dropped from the output, which is exactly the trap
+     this landed in first time round. */
+  --z-index-backdrop: 1;
+  --z-index-content: 2;
+  --z-index-chrome: 10;
+  --z-index-overlay: 100;
+}
+
+@layer base {
+  /* One fluid root drives the whole scale; vw+vh keeps it orientation-neutral so
+     portrait and landscape resolve to the same type size across the whole
+     supported-resolution matrix (800×480 Pi Touch → 4K, both orientations; see
+     README). Apps size children in rem and override only the three stops below
+     — the floor, the vw+vh gain, and the ceiling — instead of restating the
+     clamp or inventing their own --root variable. */
+  :root {
+    --root-min: 15px;
+    --root-gain: 1;
+    --root-max: 56px;
+    font-size: clamp(
+      var(--root-min),
+      calc(var(--root-gain) * 1vw + var(--root-gain) * 1vh),
+      var(--root-max)
+    );
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+  }
+
+  body {
+    min-height: 100vh; /* fallback for engines below the svh floor */
+    min-height: 100svh;
+    text-rendering: optimizeLegibility;
+  }
+}

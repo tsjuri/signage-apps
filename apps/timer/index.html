@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3V92EN0SBN"></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+      // The automatic page view is suppressed because it fires before main.js can
+      // profile the player, so it would carry no player fields. trackPlayer sends it
+      // instead, once the profile is known (sendPageView: true). Set both or neither.
+      gtag('config', 'G-3V92EN0SBN', { send_page_view: false })
+    </script>
+    <title>Timer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A full-screen countdown / count-up timer for digital signage: big ticking days, hours, minutes and seconds to (or since) any target."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='13' y='2.5' width='6' height='2.5' rx='1' fill='%2338e0b0'/%3E%3Ccircle cx='16' cy='18' r='11' fill='none' stroke='%2338e0b0' stroke-width='2.5'/%3E%3Cpath d='M16 18V11' fill='none' stroke='%23f4f6fb' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+    <link
+      rel="preload"
+      href="/static/fonts/bricolage-grotesque-latin-standard-normal.woff2?v=__ASSET_VERSION__"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/static/fonts/hanken-grotesk-latin-wght-normal.woff2?v=__ASSET_VERSION__"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <!-- The degraded-mode gate is injected here at build time by
+         @screenly-labs/signage-kit (injectGate), before the stylesheet. -->
+    <link rel="stylesheet" href="/static/styles/main.css?v=__ASSET_VERSION__" />
+    <script src="/static/js/main.js?v=__ASSET_VERSION__" defer></script>
+  </head>
+  <body>
+    <main class="stage">
+      <section class="timer" aria-labelledby="title">
+        <!-- Static example keeps the clock legible pre-JS and in the store
+             preview; JS rewrites it from the launch URL and ticks it live. -->
+        <h1 class="timer__title" id="title">New Year</h1>
+        <p class="timer__target" id="target-line">1 January 2027 at 00:00</p>
+
+        <div class="clock" id="clock" role="timer" aria-live="off">
+          <div class="unit">
+            <span class="unit__num" id="days">171</span>
+            <span class="unit__label" id="days-label">Days</span>
+          </div>
+          <div class="unit">
+            <span class="unit__num" id="hours">04</span>
+            <span class="unit__label">Hours</span>
+          </div>
+          <div class="unit">
+            <span class="unit__num" id="minutes">23</span>
+            <span class="unit__label">Minutes</span>
+          </div>
+          <div class="unit">
+            <span class="unit__num" id="seconds">09</span>
+            <span class="unit__label">Seconds</span>
+          </div>
+        </div>
+
+        <p class="timer__message" id="message">Happy New Year!</p>
+      </section>
+
+      <a
+        class="brand"
+        href="https://www.screenly.io"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Screenly (opens in a new tab)"
+      >
+        <img src="/static/images/screenly-logo.svg?v=__ASSET_VERSION__" alt="Screenly" />
+      </a>
+    </main>
+  </body>
+</html>

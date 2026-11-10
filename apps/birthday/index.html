@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-13LYE4F3X2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+      // The automatic page view is suppressed because it fires before main.js can
+      // profile the player, so it would carry no player fields. trackPlayer sends it
+      // instead, once the profile is known (sendPageView: true). Set both or neither.
+      gtag('config', 'G-13LYE4F3X2', { send_page_view: false })
+    </script>
+    <title>Happy Birthday</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A full-screen birthday celebration for digital signage — a big personalised greeting under a shower of confetti."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M15 4c0 1.5-2 2-2 3.6A2 2 0 0016 8c0-1.6-1-2.4-1-4z' fill='%23f6b93b'/%3E%3Crect x='14.4' y='9' width='1.2' height='4' fill='%23e8c39e'/%3E%3Cpath d='M6 20c0-3 2-5 5-5h8c3 0 5 2 5 5v6H6z' fill='%23ff6b9d'/%3E%3Crect x='6' y='22' width='18' height='4' fill='%23f1ece0'/%3E%3Ccircle cx='10' cy='19' r='1' fill='%23ffd166'/%3E%3Ccircle cx='15' cy='19' r='1' fill='%236ad3c9'/%3E%3Ccircle cx='20' cy='19' r='1' fill='%23ffd166'/%3E%3C/svg%3E"
+    />
+    <link
+      rel="preload"
+      href="/static/fonts/fraunces-latin-standard-normal.woff2?v=__ASSET_VERSION__"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/static/fonts/hanken-grotesk-latin-wght-normal.woff2?v=__ASSET_VERSION__"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <!-- The degraded-mode gate is injected here at build time by
+         @screenly-labs/signage-kit (injectGate), before the stylesheet. -->
+    <link rel="stylesheet" href="/static/styles/main.css?v=__ASSET_VERSION__" />
+    <script src="/static/js/main.js?v=__ASSET_VERSION__" defer></script>
+  </head>
+  <body>
+    <main class="stage">
+      <!-- Confetti scraps are injected here by JS; empty (and inert) pre-JS. -->
+      <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+      <section class="card" aria-labelledby="greeting">
+        <p class="card__eyebrow">Celebrating</p>
+        <!-- Static example keeps the card legible pre-JS and in the store preview;
+             JS rewrites it from the launch URL's query string. -->
+        <h1 class="card__greeting" id="greeting">Happy Birthday, Alex!</h1>
+        <p class="card__message" id="message">Have an amazing day!</p>
+        <p class="card__from" id="from">— The Screenly Team</p>
+      </section>
+
+      <a
+        class="brand"
+        href="https://www.screenly.io"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Screenly (opens in a new tab)"
+      >
+        <img src="/static/images/screenly-logo.svg?v=__ASSET_VERSION__" alt="Screenly" />
+      </a>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,158 @@
+/* =========================================================================
+   Screenly Quotes App — "Reading room"
+   One quotation, set like a passage in a well-made book: a large Fraunces
+   serif over a warm ink ground, an oversized quotation glyph as a quiet
+   watermark behind it, and a letterspaced Hanken Grotesk byline under a gilt
+   hairline. The quote is the hero; everything else stays still. Tuned for
+   unattended signage — legible at distance, no interaction, both orientations.
+   ========================================================================= */
+
+@import 'tailwindcss';
+/* Shared base (brand/font tokens + fluid root + the degraded-mode kill-switch),
+   the canonical @font-face set, the standardized footer badge, and the .stage
+   frame — all from @screenly-labs/signage-kit. The app's own @theme + component
+   styles below layer on top; the design identity stays here, per-app. */
+@import '@screenly-labs/signage-kit/styles/preset.css';
+@import '@screenly-labs/signage-kit/styles/fonts.css';
+@import '@screenly-labs/signage-kit/styles/brand.css';
+@import '@screenly-labs/signage-kit/styles/stage.css';
+
+/* Design tokens — also generate utilities (bg-ink, text-gilt…). The font
+   families (--font-display: Fraunces, --font-sans: Hanken Grotesk) come from the
+   kit preset; override here only to diverge. */
+@theme {
+  --color-ink: #16140f;
+  --color-paper: #f1ece0;
+  --color-paper-dim: #b7b0a0;
+  --color-watermark: #2a2519;
+  --color-gilt: #c9a24b;
+}
+
+@layer base {
+  /* Tune the kit's fluid root (clamp of vw+vh) for this design; the clamp itself
+     lives in the preset. Children size in rem, so the layout scales cleanly from
+     480px → 4K, portrait and landscape, with no breakpoints. */
+  :root {
+    --root-min: 17px;
+    --root-gain: 1.05;
+    --root-max: 56px;
+  }
+
+  body {
+    min-height: 100vh; /* fallback for engines below the svh floor (~2018 players) */
+    min-height: 100svh;
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer components {
+  .quote {
+    position: relative;
+    margin: 0;
+    /* Portrait wants a tight measure; landscape is wide, so a tight cap there
+       fragments even short quotes into a narrow ragged column with the screen
+       empty either side. Widen the measure in landscape for 2-4 longer lines. */
+    max-width: 18em;
+    text-align: center;
+    z-index: 1;
+  }
+
+  /* Wider measure on landscape screens (the primary signage case). */
+  @media (orientation: landscape) {
+    .quote {
+      max-width: 28em;
+    }
+  }
+
+  /* The signature: an oversized quotation glyph behind the text. Quiet by
+     design — a hair above the ink so it reads as embossed, not decorative. */
+  .quote__mark {
+    position: absolute;
+    top: -0.46em;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: -1;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 13rem;
+    line-height: 1;
+    color: var(--color-watermark);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .quote__text {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 430;
+    font-size: 2.3rem;
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+
+  .quote__by {
+    margin-top: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .quote__rule {
+    width: 2.4rem;
+    height: 2px;
+    background-color: var(--color-gilt);
+  }
+
+  .quote__author {
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gilt);
+  }
+}
+
+@layer base {
+  /* One orchestrated entrance, gated for reduced-motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    .quote {
+      animation: quote-in 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+    .quote__mark {
+      animation: mark-in 1400ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+  }
+
+  @keyframes quote-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.6rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes mark-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* Degraded mode — old/weak signage players (html.legacy set by the shared gate)
+   drop all animation. The generic kill-switch now comes from the kit's preset,
+   imported above. Content is already legible without the entrance (it only
+   animates the reveal), so this app needs no app-specific resting state. */

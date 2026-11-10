@@ -1,0 +1,53 @@
+{
+  "manifestVersion": "1",
+  "id": "team-milestone",
+  "name": "Team Milestone",
+  "description": "A full-screen team-milestone celebration for digital signage. Puts a named team's milestone front and centre — a big value like \"5 Years\", \"1,000,000 Users\", or \"Project Shipped\" — with an optional caption, a message, and a date, all under a shower of confetti. Everything arrives in the launch URL, so one deployment celebrates any team's win.",
+  "summary": "Celebrate a team's milestone on any display.",
+  "vendor": "Screenly",
+  "tags": ["Celebration", "Team", "Business"],
+  "homepage": "https://team-milestone.srly.io/",
+  "source": "https://github.com/Screenly-Labs/team-milestone",
+  "support": "https://github.com/Screenly-Labs/team-milestone/issues",
+  "playback": { "pacing": "fixed" },
+  "settings": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "team": {
+        "type": "string",
+        "title": "Team name",
+        "description": "The team being celebrated, e.g. Team Phoenix. Shown above the milestone.",
+        "x-widget": "text"
+      },
+      "value": {
+        "type": "string",
+        "title": "Milestone",
+        "description": "The headline value, e.g. 5 Years, 1,000,000 Users, or Project Shipped.",
+        "x-widget": "text"
+      },
+      "label": {
+        "type": "string",
+        "title": "Caption",
+        "description": "Optional line under the milestone, e.g. of building together.",
+        "x-widget": "text"
+      },
+      "message": {
+        "type": "string",
+        "title": "Message",
+        "description": "Optional supporting sentence, e.g. a thank-you to the team.",
+        "x-widget": "text"
+      },
+      "date": {
+        "type": "string",
+        "title": "Date",
+        "description": "Optional dateline, e.g. July 2026.",
+        "x-widget": "text"
+      }
+    }
+  },
+  "launch": {
+    "baseUrl": "https://team-milestone.srly.io/",
+    "template": "{?team,value,label,message,date}"
+  }
+}

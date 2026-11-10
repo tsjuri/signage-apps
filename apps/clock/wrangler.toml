@@ -1,0 +1,27 @@
+name="clock-app"
+main="src/index.jsx"
+compatibility_date = "2022-09-22"
+workers_dev = true
+
+[site]
+bucket = "./assets"
+
+[dev]
+port = 8888
+
+[env.dev]
+workers_dev = true
+
+[env.stage]
+workers_dev = false
+route = { pattern = "stage-clock.srly.io", custom_domain = true }
+
+[env.stage.vars]
+ENV = "stage"
+
+[env.production]
+workers_dev = false
+route = { pattern = "clock.srly.io", custom_domain = true }
+
+[env.production.vars]
+ENV = "production"

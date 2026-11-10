@@ -1,0 +1,258 @@
+/* =========================================================================
+   Screenly Team Milestone App — "Ovation"
+   One team milestone, set like a curtain call: the team name in small gilt
+   capitals, then the milestone value huge in a Bricolage Grotesque display face
+   over a deep midnight ground lit by a warm gold burst, with a caption, an
+   optional message, and a dateline below. Confetti falls quietly behind it. The
+   value is the hero. Tuned for unattended signage — legible at distance, no
+   interaction, both orientations, and it respects prefers-reduced-motion.
+   ========================================================================= */
+
+@import 'tailwindcss';
+/* Shared base (brand/font tokens + fluid root + the degraded-mode kill-switch),
+   the canonical @font-face set, the standardized footer badge, and the .stage
+   frame — all from @screenly-labs/signage-kit. The app's own @theme + component
+   styles below layer on top; the design identity stays here, per-app. */
+@import '@screenly-labs/signage-kit/styles/preset.css';
+@import '@screenly-labs/signage-kit/styles/fonts.css';
+@import '@screenly-labs/signage-kit/styles/brand.css';
+@import '@screenly-labs/signage-kit/styles/stage.css';
+
+/* Design tokens — also generate utilities (bg-ink, text-gold, font-display…).
+   --font-sans (Hanken Grotesk) comes from the kit preset; --font-display is
+   overridden here because "Ovation" leads with Bricolage Grotesque, not the
+   preset's serif. */
+@theme {
+  --color-ink: #0d1326;
+  --color-ink-deep: #070b18;
+  --color-burst: #2b3d78;
+  --color-paper: #f4f6fb;
+  --color-paper-dim: #aeb8d0;
+  --color-gold: #f6c453;
+  --color-gold-deep: #d8a637;
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Confetti palette, referenced only from JS-set inline styles (var(--confetti-N)).
+   Kept OUT of @theme on purpose: Tailwind v4 tree-shakes theme vars it can't see
+   used in the stylesheet, which would drop every colour but the fallback and make
+   the whole shower one colour. As a plain :root block these are always emitted.
+   A gold-and-white palette (no party brights) for a premium ticker-tape — this is
+   what sets the milestone shower apart from the Birthday app's confetti. */
+:root {
+  --confetti-0: #f6c453;
+  --confetti-1: #f4f6fb;
+  --confetti-2: #ffe4a3;
+  --confetti-3: #d8a637;
+}
+
+@layer base {
+  /* Tune the kit's fluid root (clamp of vw+vh) for this design; the clamp itself
+     lives in the preset. vw+vh keeps it orientation-neutral so portrait and
+     landscape resolve to the same type size. Children size in rem, so the layout
+     scales cleanly from 480px → 4K with no breakpoints. */
+  :root {
+    --root-min: 17px;
+    --root-gain: 1.05;
+    --root-max: 56px;
+  }
+
+  body {
+    min-height: 100vh; /* fallback for engines below the svh floor (~2018 players) */
+    min-height: 100svh;
+    background-color: var(--color-ink);
+    background-image: radial-gradient(ellipse at 50% 34%, var(--color-burst) 0%, transparent 60%),
+      linear-gradient(180deg, var(--color-ink) 0%, var(--color-ink-deep) 100%);
+    background-attachment: fixed;
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer components {
+  .card {
+    position: relative;
+    z-index: 1;
+    max-width: 20em;
+    text-align: center;
+  }
+
+  @media (orientation: landscape) {
+    .card {
+      max-width: 30em;
+    }
+  }
+
+  .card__team {
+    margin: 0 0 0.7rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.86rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .card__value {
+    margin: 0;
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-size: 5rem;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    color: var(--color-paper);
+    /* A faint warm halo so the numeral reads as lit by the burst behind it. */
+    text-shadow: 0 0 0.12em color-mix(in srgb, var(--color-gold) 22%, transparent);
+  }
+
+  .card__label {
+    margin: 1rem 0 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    text-wrap: balance;
+    color: var(--color-gold-deep);
+  }
+
+  .card__message {
+    margin: 1.6rem auto 0;
+    max-width: 24em;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 1.05rem;
+    line-height: 1.45;
+    text-wrap: balance;
+    color: var(--color-paper-dim);
+  }
+
+  .card__date {
+    margin: 1.8rem 0 0;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-paper-dim);
+  }
+
+  .card__team[hidden],
+  .card__label[hidden],
+  .card__message[hidden],
+  .card__date[hidden] {
+    display: none;
+  }
+
+  /* ---- Confetti -------------------------------------------------------- */
+
+  .confetti {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* Ticker-tape streamers: narrow and long, unlike the Birthday app's squarer
+     confetti. Colour comes from a per-scrap palette reference set in main.ts. */
+  .confetti__bit {
+    position: absolute;
+    top: -8vh;
+    left: var(--left);
+    width: calc(0.4rem * var(--size));
+    height: calc(1.6rem * var(--size));
+    background-color: var(--bit-color, var(--confetti-0));
+    border-radius: 1px;
+    opacity: 0.92;
+    will-change: transform;
+  }
+
+  /* A few round sequins among the streamers. */
+  .confetti__bit--round {
+    border-radius: 50%;
+    width: calc(0.55rem * var(--size));
+    height: calc(0.55rem * var(--size));
+  }
+
+  /* Reduced motion: hold the shower still as a scatter. Lives in @layer
+     components (not base) so it can override the animated .confetti__bit above —
+     the components layer wins over base regardless of specificity. */
+  @media (prefers-reduced-motion: reduce) {
+    .confetti__bit {
+      top: var(--top);
+      transform: translateX(var(--drift)) rotate(var(--rotate));
+    }
+  }
+}
+
+@layer base {
+  @media (prefers-reduced-motion: no-preference) {
+    /* The confetti shower: each scrap falls the full height with a little
+       horizontal drift and spin. The delay is applied *negative* so every piece
+       starts mid-fall — the shower fills the whole frame from the first paint
+       instead of clustering at the top edge. */
+    .confetti__bit {
+      animation: confetti-fall var(--duration) linear calc(var(--delay) * -1) infinite;
+    }
+
+    /* One orchestrated entrance, top to bottom. */
+    .card__team {
+      animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+    .card__value {
+      animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 90ms both;
+    }
+    .card__label {
+      animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 220ms both;
+    }
+    .card__message {
+      animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 340ms both;
+    }
+    .card__date {
+      animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 460ms both;
+    }
+  }
+
+  @keyframes confetti-fall {
+    from {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    to {
+      transform: translate3d(var(--drift), 118vh, 0) rotate(var(--rotate));
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.7rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* =========================================================================
+   Degraded mode — old/weak signage players (html.legacy set by the degraded-mode
+   gate the build injects). Treated like prefers-reduced-motion but stronger: assume the
+   device can't afford animation at all. Content stays fully legible; the entrance
+   just appears and the confetti holds as a static scatter instead of falling.
+   ========================================================================= */
+
+/* App-specific resting state: hold the confetti at its scatter. The base
+   .confetti__bit parks each scrap off-screen at top:-8vh and relies on the fall
+   animation, so without this the kill-switch would hide the whole shower. (The
+   generic html.legacy kill-switch itself comes from the kit's preset, imported
+   above.) */
+@layer components {
+  html.legacy .confetti__bit {
+    top: var(--top);
+    transform: translateX(var(--drift)) rotate(var(--rotate));
+  }
+}

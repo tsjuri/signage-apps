@@ -1,0 +1,195 @@
+/* =========================================================================
+   Screenly Timer App: "Countdown"
+   Big ticking days / hours / minutes / seconds counting down to, or up from,
+   a target instant, set in a tabular Bricolage Grotesque over a graphite ground
+   with a single mint accent. The clock is the hero: four labelled numerals on a
+   row, an event title above and the target date below. Tuned for unattended
+   signage: legible at distance, no interaction, both orientations. The seconds
+   flip is the only motion, so there's nothing to gate for reduced-motion.
+   ========================================================================= */
+
+@import 'tailwindcss';
+/* Shared base (brand/font tokens + fluid root + the degraded-mode kill-switch),
+   the canonical @font-face set, the standardized footer badge, and the .stage
+   frame, all from @screenly-labs/signage-kit. The app's own @theme + component
+   styles below layer on top; the design identity stays here, per-app. */
+@import '@screenly-labs/signage-kit/styles/preset.css';
+@import '@screenly-labs/signage-kit/styles/fonts.css';
+@import '@screenly-labs/signage-kit/styles/brand.css';
+@import '@screenly-labs/signage-kit/styles/stage.css';
+
+/* Design tokens; also generate utilities (bg-ink, text-mint, font-display…).
+   --font-sans (Hanken Grotesk) comes from the kit preset; --font-display is
+   overridden to Bricolage Grotesque, this app's grotesque display face. */
+@theme {
+  --color-ink: #0b0e13;
+  --color-ink-deep: #05070b;
+  --color-glow: #16202c;
+  --color-paper: #f4f6fb;
+  --color-paper-dim: #8b97ab;
+  --color-mint: #38e0b0;
+  --color-panel: #131822;
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  /* Tune the kit's fluid root (clamp of vw+vh) for this design; the clamp itself
+     lives in the preset. Children size in rem, so the layout scales cleanly from
+     480px → 4K, portrait and landscape, with no breakpoints. */
+  :root {
+    --root-min: 16px;
+    --root-gain: 1;
+    --root-max: 54px;
+  }
+
+  body {
+    min-height: 100vh; /* fallback for engines below the svh floor (~2018 players) */
+    min-height: 100svh;
+    background-color: var(--color-ink);
+    background-image: radial-gradient(ellipse at 50% 40%, var(--color-glow) 0%, transparent 62%),
+      linear-gradient(180deg, var(--color-ink) 0%, var(--color-ink-deep) 100%);
+    background-attachment: fixed;
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer components {
+  .timer {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 42rem;
+    text-align: center;
+  }
+
+  .timer__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-size: 2.4rem;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    color: var(--color-paper);
+  }
+
+  .timer__target {
+    margin: 0.7rem 0 0;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-mint);
+  }
+
+  /* The clock: four labelled numerals in a row, wrapping to 2×2 only when the
+     viewport is too narrow to hold them (portrait Pi, etc.). */
+  .clock {
+    margin-top: clamp(1.4rem, 4vmin, 2.6rem);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: clamp(0.6rem, 3vmin, 1.8rem);
+  }
+
+  /* Portrait is too narrow for one row of four; lay the units out as a tidy 2×2
+     grid instead of letting them wrap 3 + 1. */
+  @media (orientation: portrait) {
+    .clock {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-width: 24rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  .unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 3.2em;
+    background-color: color-mix(in srgb, var(--color-panel) 78%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-paper) 8%, transparent);
+    border-radius: 0.6rem;
+    padding: clamp(0.7rem, 2.4vmin, 1.4rem) clamp(0.5rem, 2vmin, 1.2rem);
+  }
+
+  .unit__num {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-size: 4.6rem;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    /* Tabular figures so the width doesn't jitter as the digits tick. */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+    color: var(--color-paper);
+  }
+
+  .unit__label {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-paper-dim);
+  }
+
+  .timer__message {
+    margin: clamp(1.4rem, 4vmin, 2.4rem) auto 0;
+    max-width: 24em;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    text-wrap: balance;
+    color: var(--color-mint);
+  }
+
+  .timer__message[hidden] {
+    display: none;
+  }
+
+  /* Counting up past the target: tint the numerals mint so a glance tells you the
+     event has arrived / passed. */
+  :root[data-direction='up'] .unit__num {
+    color: var(--color-mint);
+  }
+}
+
+@layer base {
+  /* One gentle entrance for the whole card; the ticking itself is the motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    .timer {
+      animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.7rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* =========================================================================
+   Degraded mode: old/weak signage players (html.legacy set by the shared gate).
+   The generic kill-switch (drops animation/transition/will-change) now comes from
+   the kit's preset, imported above. The clock ticks in JS and the only CSS motion
+   is the one-off .timer entrance, which the kill-switch already disables, so there's
+   no animated resting state to hold, so this app needs no extra html.legacy rule.
+   ========================================================================= */

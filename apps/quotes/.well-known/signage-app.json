@@ -1,0 +1,13 @@
+{
+  "manifestVersion": "1",
+  "id": "quotes",
+  "name": "Quotes",
+  "description": "A clean, full-screen quotation for any display. Each load shows one work-friendly quote, chosen at random, set in a large serif over a warm ink ground.",
+  "summary": "A fresh quote for any display.",
+  "vendor": "Screenly",
+  "tags": ["Quotes"],
+  "homepage": "https://quotes.srly.io/",
+  "source": "https://github.com/Screenly-Labs/quotes",
+  "support": "https://github.com/Screenly-Labs/quotes/issues",
+  "launch": { "baseUrl": "https://quotes.srly.io/" }
+}

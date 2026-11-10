@@ -1,0 +1,16 @@
+dist
+node_modules
+worker
+.dev.vars
+.wrangler
+package-lock.json
+.cargo-ok
+
+.DS_Store
+**/.DS_Store
+
+# Output of 'npm pack'
+*.tgz
+
+# Claude Code local worktrees/artifacts
+.claude/

@@ -1,1 +1,59 @@
 # signage-apps
+
+Logo-free signage apps for [Anthias](https://anthias.screenly.io), served from GitHub Pages
+as a private app catalog. Staff add them in the Anthias dashboard under **Add → Apps**, exactly
+like the stock ones.
+
+The apps are adapted from [Screenly-Labs](https://github.com/Screenly-Labs)' open-source signage
+apps and its shared [signage-kit](https://github.com/Screenly-Labs/signage-kit), all licensed
+**AGPL-3.0**. This repository is the corresponding source of the modified versions. It is not
+affiliated with or endorsed by Screenly.
+
+## What was changed
+
+- The "Powered by Screenly" badge is removed (`kit/src/branding.ts`, `kit/styles/brand.css`,
+  and stripped from the built HTML).
+- Google Analytics, Sentry and player telemetry are removed (`kit/src/analytics.ts`, and
+  stripped from the built HTML). The apps send nothing to Screenly or Google.
+- Paths are rewritten so every app can live in a sub-folder of one Pages site.
+- `clock` was a Cloudflare Worker; it is rendered to static HTML at build time with a fixed
+  location (US, America/New_York — see `SSR` in `build.mjs`).
+- Each app's manifest points at this site instead of `*.srly.io`.
+
+## Apps
+
+birthday, capitals, clock, menu-board, missing-children, on-this-day, opening-hours, quotes,
+team-milestone, timer, word, world-clock.
+
+Not included (they need a server, an API key or a scheduled scraper): air quality, weather,
+RSS, moon, Product Hunt, Silver Alert.
+
+## Publishing
+
+Push to `main`. The workflow in `.github/workflows/pages.yml` builds everything with Bun and
+publishes to GitHub Pages. One-time setting: **Settings → Pages → Source: GitHub Actions**.
+
+The catalog index is then at `https://tsjuri.github.io/signage-apps/manifest.json`.
+
+Build locally (needs [Bun](https://bun.sh)): `bun build.mjs` → `site/`.
+Note: the clock's build minifies its sources in place, so build in a throwaway copy.
+
+## Pointing a player at the catalog
+
+On the player, over SSH:
+
+```
+curl -fsSL https://tsjuri.github.io/signage-apps/apply-catalog.sh | bash
+```
+
+This adds `APP_STORE_INDEX_URL` and `APP_STORE_ALLOWED_HOST_SUFFIXES` to the `anthias-server`
+service and restarts it. **Re-run it after every Anthias upgrade**, which regenerates
+`docker-compose.yml`. Source: `stick/apply-catalog.sh`.
+
+Assets already added keep working either way: an installed app is stored as its full URL.
+
+## Adding or changing an app
+
+Edit it under `apps/<id>/` (a fork of the Screenly-Labs source) and push. To add another of
+their apps, copy its repo into `apps/<id>/` and point its `@screenly-labs/signage-kit`
+dependency at `file:../../kit`.

@@ -1,0 +1,232 @@
+/* =========================================================================
+   Screenly Birthday App — "Confetti"
+   One personalised birthday greeting, set large in a warm Fraunces serif over a
+   deep grape ground, under a slow shower of multicoloured confetti. The greeting
+   is the hero; the confetti is quiet celebration behind it. Tuned for unattended
+   signage — legible at distance, no interaction, both orientations, and it
+   respects prefers-reduced-motion (the confetti stills).
+   ========================================================================= */
+
+@import 'tailwindcss';
+/* Shared base (brand/font tokens + fluid root + the degraded-mode kill-switch),
+   the canonical @font-face set, the standardized corner badge, and the .stage
+   frame — all from @screenly-labs/signage-kit. The app's own @theme + component
+   styles below layer on top; the design identity stays here, per-app. */
+@import '@screenly-labs/signage-kit/styles/preset.css';
+@import '@screenly-labs/signage-kit/styles/fonts.css';
+@import '@screenly-labs/signage-kit/styles/brand.css';
+@import '@screenly-labs/signage-kit/styles/stage.css';
+
+/* Design tokens — also generate utilities (bg-ground, text-gold…). The font
+   families (--font-display: Fraunces, --font-sans: Hanken Grotesk) come from the
+   kit preset; override here only to diverge. */
+@theme {
+  --color-ground-top: #34123f;
+  --color-ground-bottom: #6a1f4d;
+  --color-glow: #8a2b63;
+  --color-cream: #fdf4e3;
+  --color-cream-dim: #e3c9c9;
+  --color-gold: #f6c453;
+}
+
+/* Confetti palette, referenced only from JS-set inline styles (var(--confetti-N)).
+   Kept OUT of @theme on purpose: Tailwind v4 tree-shakes theme vars it can't see
+   used in the stylesheet, which would drop every colour but the fallback and make
+   the whole shower one colour. As a plain :root block these are always emitted. */
+:root {
+  --confetti-0: #f6c453;
+  --confetti-1: #ff6b9d;
+  --confetti-2: #6ad3c9;
+  --confetti-3: #ff8c66;
+  --confetti-4: #c8a2ff;
+}
+
+@layer base {
+  /* Tune the kit's fluid root (clamp of vw+vh) for this design; the clamp itself
+     lives in the preset. Children size in rem, so the layout scales cleanly from
+     480px → 4K, portrait and landscape, with no breakpoints. */
+  :root {
+    --root-min: 17px;
+    --root-gain: 1.05;
+    --root-max: 56px;
+  }
+
+  body {
+    min-height: 100vh; /* fallback for engines below the svh floor (~2018 players) */
+    min-height: 100svh;
+    background-color: var(--color-ground-top);
+    background-image: radial-gradient(circle at 50% 18%, var(--color-glow) 0%, transparent 55%),
+      linear-gradient(160deg, var(--color-ground-top) 0%, var(--color-ground-bottom) 100%);
+    background-attachment: fixed;
+    color: var(--color-cream);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer components {
+  .card {
+    position: relative;
+    z-index: 1;
+    max-width: 20em;
+    text-align: center;
+  }
+
+  @media (orientation: landscape) {
+    .card {
+      max-width: 30em;
+    }
+  }
+
+  .card__eyebrow {
+    margin: 0 0 0.9rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .card__greeting {
+    margin: 0;
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 560;
+    font-size: 3.4rem;
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    color: var(--color-cream);
+  }
+
+  .card__message {
+    margin: 1.5rem 0 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 1.3;
+    text-wrap: balance;
+    color: var(--color-cream-dim);
+  }
+
+  .card__from {
+    margin: 1.8rem 0 0;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .card__message[hidden],
+  .card__from[hidden] {
+    display: none;
+  }
+
+  /* ---- Confetti -------------------------------------------------------- */
+
+  .confetti {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .confetti__bit {
+    position: absolute;
+    top: -6vh;
+    left: var(--left);
+    width: calc(0.7rem * var(--size));
+    height: calc(1.1rem * var(--size));
+    /* Colour comes from a per-scrap palette reference set in main.ts. */
+    background-color: var(--bit-color, var(--confetti-0));
+    border-radius: 1px;
+    opacity: 0.9;
+    will-change: transform;
+  }
+
+  .confetti__bit--round {
+    border-radius: 50%;
+    height: calc(0.7rem * var(--size));
+  }
+
+  /* Reduced motion: hold the shower still as a scatter. Lives in @layer
+     components (not base) so it can override the animated .confetti__bit above —
+     the components layer wins over base regardless of specificity. */
+  @media (prefers-reduced-motion: reduce) {
+    .confetti__bit {
+      top: var(--top);
+      transform: translateX(var(--drift)) rotate(var(--rotate));
+    }
+  }
+}
+
+@layer base {
+  @media (prefers-reduced-motion: no-preference) {
+    /* The confetti shower: each scrap falls the full height with a little
+       horizontal drift and spin. The delay is applied *negative* so every piece
+       starts mid-fall — the shower fills the whole frame from the first paint
+       instead of clustering at the top edge. */
+    .confetti__bit {
+      animation: confetti-fall var(--duration) linear calc(var(--delay) * -1) infinite;
+    }
+
+    /* One orchestrated entrance for the greeting. */
+    .card__eyebrow {
+      animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+    .card__greeting {
+      animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 80ms both;
+    }
+    .card__message {
+      animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 200ms both;
+    }
+    .card__from {
+      animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 320ms both;
+    }
+  }
+
+  @keyframes confetti-fall {
+    from {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    to {
+      transform: translate3d(var(--drift), 118vh, 0) rotate(var(--rotate));
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.7rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* =========================================================================
+   Degraded mode — old/weak signage players (html.legacy set by the inline gate
+   in index.html). Treated like prefers-reduced-motion but stronger: assume the
+   device can't afford animation at all. Content stays fully legible; the entrance
+   just appears and the confetti holds as a static scatter instead of falling.
+   ========================================================================= */
+
+/* App-specific resting state: hold the confetti at its scatter. The base
+   .confetti__bit parks each scrap off-screen at top:-6vh and relies on the fall
+   animation, so without this the kill-switch would hide the whole shower. (The
+   generic html.legacy kill-switch itself comes from the kit's preset, imported
+   above.) */
+@layer components {
+  html.legacy .confetti__bit {
+    top: var(--top);
+    transform: translateX(var(--drift)) rotate(var(--rotate));
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "manifestVersion": "1",
+  "id": "birthday",
+  "name": "Birthday",
+  "description": "A full-screen birthday celebration for digital signage. Shows a big personalised \"Happy Birthday\" greeting under a slow shower of confetti, with an optional message and signature. Set it up for one person per screen — the name, message, and sender all arrive in the launch URL, so one deployment celebrates anyone.",
+  "summary": "Celebrate someone's birthday on any display.",
+  "vendor": "Screenly",
+  "tags": ["Celebration", "Team", "Fun"],
+  "homepage": "https://birthday.srly.io/",
+  "source": "https://github.com/Screenly-Labs/birthday",
+  "support": "https://github.com/Screenly-Labs/birthday/issues",
+  "playback": { "pacing": "fixed" },
+  "settings": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "title": "Name",
+        "description": "Whose birthday it is, e.g. Alex.",
+        "x-widget": "text"
+      },
+      "message": {
+        "type": "string",
+        "title": "Message",
+        "description": "Optional line under the greeting. Defaults to a friendly wish.",
+        "x-widget": "text"
+      },
+      "from": {
+        "type": "string",
+        "title": "From",
+        "description": "Optional signature, e.g. The Screenly Team.",
+        "x-widget": "text"
+      }
+    }
+  },
+  "launch": {
+    "baseUrl": "https://birthday.srly.io/",
+    "template": "{?name,message,from}"
+  }
+}

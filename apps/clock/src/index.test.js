@@ -1,0 +1,189 @@
+import { afterEach, describe, expect, it, mock } from 'bun:test'
+import { jsx } from 'hono/jsx'
+import App from './components/App'
+import { gaIds, sentryIds } from './constants'
+
+// The Cloudflare static-assets middleware and its build-time manifest only
+// exist in the Workers runtime; stub both before importing the app.
+mock.module('__STATIC_CONTENT_MANIFEST', () => ({ default: '{}' }))
+mock.module('hono/cloudflare-workers', () => ({
+  serveStatic: () => async (_c, next) => next()
+}))
+
+// A Map-backed Cache API stub for caches.default (the SSR page cache, keyed by
+// Request). Clone on store/return — mirroring the real Cache API — so a cached
+// Response body is never consumed twice ("Body has already been used").
+const makeCache = () => {
+  const store = new Map()
+  const keyOf = (k) => (typeof k === 'string' ? k : k.url)
+  return {
+    store,
+    match: async (k) => store.get(keyOf(k))?.clone(),
+    put: async (k, res) => {
+      store.set(keyOf(k), res.clone())
+    }
+  }
+}
+
+const BASELINE_CACHE = { default: makeCache() }
+globalThis.caches = BASELINE_CACHE
+
+const app = (await import('.')).default
+
+const runWaitUntil = async (promises) => {
+  await Promise.all(promises)
+}
+
+afterEach(() => {
+  globalThis.caches = BASELINE_CACHE
+})
+
+describe('Page render (/ route)', () => {
+  it('renders the clock page HTML via hono JSX (server-side)', () => {
+    // Mirrors the route's `new Response((<App/>).toString())`.
+    const body = jsx(App, {
+      env: 'production',
+      country: 'US',
+      timezone: 'America/New_York',
+      v: 'testver'
+    }).toString()
+
+    expect(body).toContain('<!DOCTYPE html>')
+    expect(body).toContain('id="time"')
+    expect(body).toContain('id="date"')
+    // Location comes from the Cloudflare edge and is injected for the client.
+    expect(body).toContain('data-country="US"')
+    expect(body).toContain('data-timezone="America/New_York"')
+    expect(body).not.toContain('[object Object]')
+    // main.js is a self-executing classic script (no ES module export), loaded
+    // via a plain async <script> so cached HTML stays compatible across deploys.
+    expect(body).toContain('<script src="/static/js/main.js?v=testver" async defer>')
+    // Static asset URLs are cache-busted with the deploy version.
+    expect(body).toContain('/static/styles/main.css?v=testver')
+  })
+
+  it('renders on a cache miss, caching under a real Request key with the edge Cache-Control', async () => {
+    const keys = []
+    const puts = []
+    globalThis.caches = {
+      default: {
+        match: async (k) => {
+          keys.push(k)
+          return undefined
+        },
+        put: async (k) => {
+          keys.push(k)
+        }
+      }
+    }
+    const ctx = { waitUntil: (p) => puts.push(p), passThroughOnException() {} }
+
+    const res = await app.request('http://localhost/', {}, { ENV: 'production' }, ctx)
+
+    expect(res.status).toBe(200)
+    expect(await res.text()).toContain('<!DOCTYPE html>')
+    // 12h shared-cache TTL must survive the migration.
+    expect(res.headers.get('Cache-Control')).toBe('s-maxage=43200')
+    await runWaitUntil(puts)
+    // The page cache key must be a real Request (c.req.raw). hono's HonoRequest
+    // wrapper also exposes .url, so assert the concrete type to lock the
+    // contract — using c.req would fail this instanceof check.
+    expect(keys.length).toBeGreaterThan(0)
+    for (const key of keys) expect(key).toBeInstanceOf(Request)
+    // The key must be versioned by the asset bundle so a deploy busts the page
+    // cache instead of serving HTML that references the previous build's assets.
+    for (const key of keys) expect(new URL(key.url).searchParams.get('v')).toBeTruthy()
+  })
+
+  it('serves the cached page on a repeat request without re-rendering', async () => {
+    const cached = new Response('CACHED PAGE', { status: 200 })
+    globalThis.caches = { default: { match: async () => cached, put: async () => {} } }
+    const ctx = { waitUntil() {}, passThroughOnException() {} }
+
+    const res = await app.request('http://localhost/', {}, { ENV: 'production' }, ctx)
+
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('CACHED PAGE')
+  })
+})
+
+describe('Analytics integration (gtag.js / Sentry)', () => {
+  const render = (env) =>
+    jsx(App, { env, country: 'US', timezone: 'America/New_York', v: 'x' }).toString()
+
+  it('injects the environment-specific GA measurement ID and Sentry DSN', () => {
+    const body = render('production')
+    expect(body).toContain(`gtag/js?id=${gaIds.production}`)
+    expect(body).toContain(`gtag('config', '${gaIds.production}'`)
+    expect(body).toContain(`https://js.sentry-cdn.com/${sentryIds.production}.min.js`)
+  })
+
+  it('uses the stage IDs under the stage environment', () => {
+    const body = render('stage')
+    expect(body).toContain(`gtag/js?id=${gaIds.stage}`)
+    expect(body).toContain(`gtag('config', '${gaIds.stage}'`)
+    expect(body).toContain(`https://js.sentry-cdn.com/${sentryIds.stage}.min.js`)
+  })
+
+  it('pins the GA4 client_id to the device rather than the _ga cookie', () => {
+    // GA4's own client_id churns on these players, so it does not identify a screen. The kit
+    // bootstrap fetches the no-store profile route and configures with the device-derived id.
+    const body = render('production')
+    expect(body).toContain("fetch('/api/player'")
+    expect(body).toContain('cfg.client_id = clientId')
+    // Never baked into this HTML: it is edge-cached with no per-screen component, so a rendered
+    // id would be handed to every screen that hit the cache afterwards.
+    expect(body).not.toMatch(/client_id['"]?\s*[:=]\s*['"][0-9]+\.[0-9]+['"]/)
+  })
+
+  it('still configures if the profile fetch stalls, so a screen never goes silent', () => {
+    const body = render('production')
+    expect(body).toContain('setTimeout')
+    expect(body).toContain('catch')
+  })
+
+  it('omits the GA and Sentry tags entirely when ENV is unset', () => {
+    // Local dev, `wrangler dev`, and the default *.workers.dev deploy have no
+    // ENV var, so gaIds[env]/sentryIds[env] are undefined. The snippet must be
+    // skipped rather than rendered with an empty id (which would load gtag.js
+    // with no measurement ID and ping GA / Sentry with junk requests).
+    const body = render(undefined)
+    expect(body).not.toContain('googletagmanager.com/gtag/js')
+    expect(body).not.toContain('gtag(')
+    expect(body).not.toContain('sentry-cdn.com')
+    expect(body).not.toContain('id=""')
+  })
+})
+
+describe('Signage-app manifest (/.well-known/signage-app.json)', () => {
+  it('serves the manifest as JSON with open CORS for the store and players', async () => {
+    const res = await app.request('http://localhost/.well-known/signage-app.json')
+
+    expect(res.status).toBe(200)
+    // Cross-origin consumers (store index + players) require open CORS and JSON.
+    expect(res.headers.get('Content-Type')).toContain('application/json')
+    expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*')
+
+    const body = await res.json()
+    expect(body.manifestVersion).toBe('1')
+    expect(body.id).toBe('clock')
+    // The setting name + enum values must match the query param the app accepts.
+    expect(body.settings.properties['24h'].enum).toEqual(['', '0', '1'])
+    // baseUrl must be https with a trailing slash; template drops empty 24h.
+    expect(body.launch.baseUrl).toBe('https://clock.srly.io/')
+    expect(body.launch.template).toBe('{?24h}')
+  })
+})
+
+describe('Static asset caching (/static/*)', () => {
+  it('caches versioned assets immutably and unversioned ones briefly', async () => {
+    // Versioned URL (?v=...) is content-addressed via the query, so it is safe
+    // to cache forever; the unversioned legacy URL must stay short-lived so old
+    // cached HTML can pick up the current bundle.
+    const versioned = await app.request('http://localhost/static/js/main.js?v=abc')
+    expect(versioned.headers.get('Cache-Control')).toBe('public, max-age=31536000, immutable')
+
+    const unversioned = await app.request('http://localhost/static/js/main.js')
+    expect(unversioned.headers.get('Cache-Control')).toBe('public, max-age=300')
+  })
+})

@@ -1,0 +1,90 @@
+{
+  "name": "@screenly-labs/signage-kit",
+  "version": "2026.10.0",
+  "description": "Shared build pipeline, degraded-mode layer, and base Tailwind preset for Screenly-Labs signage apps.",
+  "type": "module",
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Screenly-Labs/signage-kit.git"
+  },
+  "homepage": "https://github.com/Screenly-Labs/signage-kit#readme",
+  "bugs": "https://github.com/Screenly-Labs/signage-kit/issues",
+  "exports": {
+    "./polyfills": "./src/polyfills.ts",
+    "./branding": "./src/branding.ts",
+    "./analytics": "./src/analytics.ts",
+    "./analytics-schema": "./src/analytics-schema.ts",
+    "./capability": "./src/capability.ts",
+    "./analytics-server": "./src/analytics-server.ts",
+    "./profiler": "./src/profiler.ts",
+    "./gate": {
+      "types": "./src/gate.d.ts",
+      "default": "./src/gate.js"
+    },
+    "./build": {
+      "types": "./src/build.d.ts",
+      "default": "./src/build.js"
+    },
+    "./sync-fonts": {
+      "types": "./src/sync-fonts.d.ts",
+      "default": "./src/sync-fonts.js"
+    },
+    "./styles/preset.css": "./styles/preset.css",
+    "./styles/degraded.css": "./styles/degraded.css",
+    "./styles/signage-reset.css": "./styles/signage-reset.css",
+    "./styles/fonts.css": "./styles/fonts.css",
+    "./styles/brand.css": "./styles/brand.css",
+    "./styles/header.css": "./styles/header.css",
+    "./styles/stage.css": "./styles/stage.css",
+    "./screenly-logo.svg": "./styles/screenly-logo.svg",
+    "./analytics-bootstrap": {
+      "types": "./src/analytics-bootstrap.d.ts",
+      "default": "./src/analytics-bootstrap.js"
+    }
+  },
+  "files": [
+    "src",
+    "styles"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "biome lint --error-on-warnings .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "test": "bun test"
+  },
+  "peerDependencies": {
+    "@csstools/postcss-cascade-layers": "^6",
+    "browserslist": "^4",
+    "esbuild": "^0.28",
+    "lightningcss": "^1.32",
+    "postcss": "^8"
+  },
+  "peerDependenciesMeta": {
+    "@csstools/postcss-cascade-layers": {
+      "optional": true
+    },
+    "postcss": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@csstools/postcss-cascade-layers": "^6.0.1",
+    "browserslist": "^4.29.3",
+    "bun-types": "^1.4.2",
+    "esbuild": "^0.28.2",
+    "lightningcss": "^1.33.0",
+    "postcss": "^8.5.28",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/hanken-grotesk": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource/space-mono": "^5.3.0"
+  }
+}
