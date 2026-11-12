@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Learning Clock</title>
+    <link rel="stylesheet" href="styles.css?v=__V__" />
+    <script src="app.js?v=__V__" defer></script>
+  </head>
+  <body>
+    <main class="stage">
+      <div class="clock"><svg id="face" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
+      <div class="read">
+        <p class="eyebrow">What time is it?</p>
+        <p class="digital"><span id="digital">10:25</span><small id="ampm">AM</small></p>
+        <p class="words" id="words">twenty-five past ten</p>
+        <div class="bar"></div>
+        <p class="how"><i class="dot dot--hour"></i><span id="how-hour"></span></p>
+        <p class="how"><i class="dot dot--min"></i><span id="how-min"></span></p>
+      </div>
+    </main>
+  </body>
+</html>

@@ -27,7 +27,8 @@ affiliated with or endorsed by Screenly.
 **Our own:** trivia-facts (a quick quiz with an answer reveal, alternating with fun facts;
 built-in set in `apps/trivia-facts/data.js`, schools can add their own from a Google Sheet,
 see `school-items-template.csv`), observances-sheet (Observances driven by each school's
-Google Sheet; template in `apps/observances-sheet/`), on-this-day (the school's own history from the On This Day tab of
+Google Sheet; template in `apps/observances-sheet/`), learning-clock (an analog clock that teaches kids to read it: coloured hands, minute ring,
+"past"/"to" halves, the time in words and how to read each hand), on-this-day (the school's own history from the On This Day tab of
 its sheet: today's entries, else one from this week, else another; nothing from the internet), observances (heritage/awareness months, school weeks and days, one animated
 slide each, shown automatically when current; edit `apps/observances/data.js` to add or change
 one), lunch-menu (five rolling school days from a Google Calendar, banner images

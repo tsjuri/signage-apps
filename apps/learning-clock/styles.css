@@ -1,0 +1,60 @@
+@font-face { font-family: Poppins; font-weight: 500; src: url(fonts/poppins-500.woff2) format('woff2'); }
+@font-face { font-family: Poppins; font-weight: 600; src: url(fonts/poppins-600.woff2) format('woff2'); }
+@font-face { font-family: Poppins; font-weight: 800; src: url(fonts/poppins-800.woff2) format('woff2'); }
+:root {
+  --u: min(1vw, 1.7778vh);
+  --bg1: #1d2558; --bg2: #2c3f8f;
+  --ink: #fff8ec;
+  --hour: #ff8a5b;   /* short hand */
+  --min: #5cc8ff;    /* long hand */
+  --face: #fff8ec; --faceink: #1d2558;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg1); }
+body { font-family: Poppins, system-ui, sans-serif; color: var(--ink); }
+.stage {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 6);
+  padding: calc(var(--u) * 4) calc(var(--u) * 7);
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+}
+.clock { flex: none; width: calc(var(--u) * 46); height: calc(var(--u) * 46); }
+.clock svg { width: 100%; height: 100%; overflow: visible; }
+.read { flex: 1; min-width: 0; max-width: calc(var(--u) * 46); }
+.eyebrow { margin: 0; font-weight: 600; font-size: calc(var(--u) * 1.7); letter-spacing: 0.2em; text-transform: uppercase; color: var(--hour); }
+.digital { margin: calc(var(--u) * 0.6) 0 0; font-weight: 800; font-size: calc(var(--u) * 9.5); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.digital small { font-size: 0.32em; font-weight: 600; margin-left: 0.35em; letter-spacing: 0.04em; opacity: 0.8; }
+.words { margin: calc(var(--u) * 1.4) 0 0; font-weight: 600; font-size: calc(var(--u) * 3.6); line-height: 1.15; }
+.bar { width: calc(var(--u) * 12); height: calc(var(--u) * 0.7); border-radius: 99px; background: var(--hour); margin: calc(var(--u) * 2.6) 0 calc(var(--u) * 2.2); }
+.how { display: flex; align-items: baseline; gap: calc(var(--u) * 1.2); margin: 0 0 calc(var(--u) * 1.2); font-weight: 500; font-size: calc(var(--u) * 2.15); line-height: 1.35; }
+.how b { font-weight: 800; }
+.how .h { color: var(--hour); } .how .m { color: var(--min); }
+.dot { flex: none; width: calc(var(--u) * 1.5); height: calc(var(--u) * 1.5); border-radius: 50%; transform: translateY(0.1em); }
+.dot--hour { background: var(--hour); } .dot--min { background: var(--min); }
+
+/* the face */
+.face { fill: var(--face); }
+.rim { fill: none; stroke: var(--ink); stroke-width: 3; opacity: 0.9; }
+.half--past { fill: var(--min); opacity: 0.1; }
+.half--to { fill: var(--hour); opacity: 0.08; }
+.halflabel { font: 600 6.5px Poppins, sans-serif; letter-spacing: 0.15em; text-transform: uppercase; fill: var(--faceink); opacity: 0.35; text-anchor: middle; }
+.tick { stroke: var(--faceink); stroke-width: 0.8; opacity: 0.45; stroke-linecap: round; }
+.tick--five { stroke-width: 1.8; opacity: 0.8; }
+.tick.on { stroke: var(--min); opacity: 1; stroke-width: 2.6; }
+.hnum { font: 800 15px Poppins, sans-serif; fill: var(--faceink); text-anchor: middle; dominant-baseline: central; }
+.hbg { fill: var(--hour); opacity: 0; }
+.hbg.on { opacity: 1; }
+.hnum.on { fill: #fff; }
+.mnum { font: 600 7.5px Poppins, sans-serif; fill: var(--ink); text-anchor: middle; dominant-baseline: central; opacity: 0.75; }
+.mbg { fill: var(--min); opacity: 0; }
+.mbg.on { opacity: 1; }
+.mnum.on { fill: var(--faceink); opacity: 1; font-weight: 800; }
+.hand { stroke-linecap: round; }
+.hand--hour { stroke: var(--hour); stroke-width: 7; }
+.hand--min { stroke: var(--min); stroke-width: 4; }
+.hand--sec { stroke: #e0435a; stroke-width: 1.2; }
+.pin { fill: var(--faceink); }
+.tag rect { rx: 4; }
+.tag--hour rect { fill: var(--hour); } .tag--min rect { fill: var(--min); }
+.tag text { font: 800 6.2px Poppins, sans-serif; fill: var(--faceink); text-anchor: middle; dominant-baseline: central; letter-spacing: 0.06em; }
+.tag--hour text { fill: #fff; }
