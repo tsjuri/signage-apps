@@ -18,7 +18,8 @@ affiliated with or endorsed by Screenly.
 - Paths are rewritten so every app can live in a sub-folder of one Pages site.
 - `clock` and `moon` were Cloudflare Workers; they are rendered to static HTML at build time
   (see `SSR` in `build.mjs`). Clock uses US / America/New_York. Moon defaults to Kingston, NY;
-  its per-screen Location setting still works, read from the URL in the browser.
+  its location is set with plain Latitude/Longitude fields (the dashboard's map picker gets
+  "Access blocked" from OpenStreetMap tiles), read from the URL in the browser.
 - Each app's manifest points at this site instead of `*.srly.io`.
 
 ## Apps

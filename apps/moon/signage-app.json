@@ -5,29 +5,40 @@
   "description": "A full-screen daily lunar display for digital signage - tonight's Moon phase and illumination rendered to the exact hemisphere, with the upcoming New, First Quarter, Full and Last Quarter phases. Location is auto-detected by IP or set per screen.",
   "summary": "Tonight's Moon phase and the phases ahead.",
   "vendor": "Screenly",
-  "tags": ["Moon", "Astronomy", "Almanac"],
+  "tags": [
+    "Moon",
+    "Astronomy",
+    "Almanac"
+  ],
   "homepage": "https://moon.srly.io/",
   "source": "https://github.com/Screenly-Labs/moon",
   "support": "https://github.com/Screenly-Labs/moon/issues",
-  "playback": { "pacing": "fixed", "refreshIntervalS": 3600 },
+  "playback": {
+    "pacing": "fixed",
+    "refreshIntervalS": 3600
+  },
   "settings": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "properties": {
-      "location": {
-        "type": "object",
-        "title": "Location",
-        "description": "Optional. Leave unset to auto-detect the screen's location by IP. Sets the hemisphere the Moon is drawn for and the timezone of the dates.",
-        "x-widget": "location-map",
-        "properties": {
-          "lat": { "type": "number" },
-          "lng": { "type": "number" }
-        }
+      "lat": {
+        "type": "number",
+        "title": "Latitude",
+        "description": "Optional. Leave empty for Kingston, NY. Sets the hemisphere the Moon is drawn for. Find it in Google Maps: right-click a spot and click the numbers to copy them (the first is latitude).",
+        "minimum": -90,
+        "maximum": 90
+      },
+      "lng": {
+        "type": "number",
+        "title": "Longitude",
+        "description": "Optional. Leave empty for Kingston, NY. The second of the two numbers from Google Maps.",
+        "minimum": -180,
+        "maximum": 180
       }
     }
   },
   "launch": {
     "baseUrl": "https://moon.srly.io/",
-    "template": "{?location*}"
+    "template": "{?lat,lng}"
   }
 }
