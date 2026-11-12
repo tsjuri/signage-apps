@@ -1,0 +1,46 @@
+/* Emblem icons, drawn on a 100×100 grid. Lines use the slide's ink colour
+ * (currentColor); class "f" fills with the accent, class "k" with ink. */
+window.ICONS = (function () {
+  var s = function (body) { return body }
+  return {
+    mosaic: s('<path class="f" d="M50 8 L62 38 L92 50 L62 62 L50 92 L38 62 L8 50 L38 38Z"/><path d="M50 26 L56 44 L74 50 L56 56 L50 74 L44 56 L26 50 L44 44Z"/><circle cx="50" cy="50" r="4" class="k"/><path d="M20 20 l10 10 M80 20 l-10 10 M20 80 l10 -10 M80 80 l-10 -10"/>'),
+    hands: s('<path d="M18 58 C18 46 30 44 36 52 L50 66 L64 52 C70 44 82 46 82 58 C82 70 66 80 50 90 C34 80 18 70 18 58Z" class="f"/><path d="M30 40 C30 26 50 22 50 36 C50 22 70 26 70 40"/>'),
+    calendar: s('<rect x="16" y="22" width="68" height="62" rx="8"/><path d="M16 40 H84 M34 14 V30 M66 14 V30"/><rect x="28" y="50" width="12" height="10" class="f" stroke="none"/><rect x="44" y="50" width="12" height="10" class="k" stroke="none" opacity=".35"/><rect x="60" y="50" width="12" height="10" class="k" stroke="none" opacity=".35"/><rect x="28" y="66" width="12" height="10" class="k" stroke="none" opacity=".35"/><rect x="44" y="66" width="12" height="10" class="k" stroke="none" opacity=".35"/>'),
+    book: s('<path d="M50 28 C40 20 24 20 14 24 V80 C24 76 40 76 50 84 C60 76 76 76 86 80 V24 C76 20 60 20 50 28Z"/><path d="M50 28 V84"/><path class="f" stroke="none" d="M58 34 C64 31 72 31 78 33 V44 C72 42 64 42 58 45Z"/>'),
+    ribbon: s('<path class="f" d="M50 14 C64 14 66 30 60 42 L40 84 L28 76 L48 40 C44 32 42 24 50 22"/><path d="M50 14 C36 14 34 30 40 42 L60 84 L72 76 L52 40"/>'),
+    flag: s('<path d="M22 90 V12"/><path class="f" d="M22 16 C40 8 56 24 78 16 V52 C56 60 40 44 22 52Z"/><path d="M22 28 C40 20 56 36 78 28 M22 40 C40 32 56 48 78 40" opacity=".55"/>'),
+    scroll: s('<path d="M26 18 H74 C80 18 80 30 74 30 H70 V78 C70 86 62 88 58 82 H24 C18 82 18 70 24 70 H30 V24"/><path class="f" stroke="none" d="M38 40 H62 V44 H38Z M38 50 H62 V54 H38Z M38 60 H54 V64 H38Z"/>'),
+    dove: s('<path class="f" d="M14 56 C30 56 40 44 46 30 C52 40 56 48 70 48 L88 40 L80 54 C74 70 54 80 34 76 L20 84 L24 72 C18 68 14 62 14 56Z"/><path d="M58 52 C50 58 40 60 30 60"/><circle cx="74" cy="48" r="2.5" class="k"/>'),
+    'shield-heart': s('<path d="M50 10 L84 22 V48 C84 70 68 84 50 92 C32 84 16 70 16 48 V22Z"/><path class="f" stroke="none" d="M50 70 C40 62 30 54 30 44 C30 36 40 32 46 38 L50 42 L54 38 C60 32 70 36 70 44 C70 54 60 62 50 70Z"/>'),
+    flame: s('<path class="f" d="M50 90 C30 90 20 76 20 60 C20 42 36 34 40 14 C52 24 56 36 54 46 C60 42 62 36 62 30 C74 42 80 52 80 62 C80 78 68 90 50 90Z"/><path d="M50 88 C42 88 38 82 38 74 C38 64 48 60 50 50 C56 58 62 64 62 74 C62 82 58 88 50 88Z"/>'),
+    sun: s('<circle cx="50" cy="50" r="18" class="f"/><path d="M50 10 V22 M50 78 V90 M10 50 H22 M78 50 H90 M22 22 L30 30 M70 70 L78 78 M78 22 L70 30 M30 70 L22 78"/>'),
+    spark: s('<path class="f" d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42Z"/><path d="M80 14 L82 22 L90 24 L82 26 L80 34 L78 26 L70 24 L78 22Z M20 70 L22 76 L28 78 L22 80 L20 86 L18 80 L12 78 L18 76Z"/>'),
+    heart: s('<path class="f" d="M50 86 C30 72 12 58 12 38 C12 24 22 14 34 14 C42 14 48 18 50 24 C52 18 58 14 66 14 C78 14 88 24 88 38 C88 58 70 72 50 86Z"/><path d="M30 34 C30 28 34 24 40 24" opacity=".7"/>'),
+    lock: s('<rect x="20" y="44" width="60" height="44" rx="8" class="f"/><path d="M32 44 V32 C32 20 40 12 50 12 C60 12 68 20 68 32 V44"/><circle cx="50" cy="62" r="5" class="k"/><path d="M50 66 V76"/>'),
+    apple: s('<path class="f" d="M50 30 C40 22 18 24 18 50 C18 72 34 90 44 88 C48 87 52 87 56 88 C66 90 82 72 82 50 C82 24 60 22 50 30Z"/><path d="M50 30 C50 22 52 16 58 12"/><path d="M54 22 C62 12 74 14 76 18 C70 26 60 26 54 22Z"/>'),
+    star: s('<path class="f" d="M50 10 L61 37 L90 39 L67 57 L75 86 L50 70 L25 86 L33 57 L10 39 L39 37Z"/>'),
+    leaf: s('<path class="f" d="M84 14 C40 14 16 36 16 64 C16 76 22 84 28 86 C70 86 86 56 84 14Z"/><path d="M16 88 C30 70 46 54 66 34"/>'),
+    code: s('<rect x="10" y="18" width="80" height="62" rx="8"/><path d="M10 32 H90"/><path class="f" stroke="none" d="M18 23 a3 3 0 1 0 0.1 0Z"/><path d="M38 46 L28 56 L38 66 M62 46 L72 56 L62 66"/><path class="f" d="M54 42 L46 70"/>'),
+    snowflake: s('<path d="M50 10 V90 M15.4 30 L84.6 70 M84.6 30 L15.4 70 M50.0 22.0 L57.7 12.8 M50.0 22.0 L42.3 12.8 M25.8 36.0 L21.6 24.7 M25.8 36.0 L13.9 38.1 M25.8 64.0 L13.9 61.9 M25.8 64.0 L21.6 75.3 M50.0 78.0 L42.3 87.2 M50.0 78.0 L57.7 87.2 M74.2 64.0 L78.4 75.3 M74.2 64.0 L86.1 61.9 M74.2 36.0 L86.1 38.1 M74.2 36.0 L78.4 24.7"/><circle cx="50" cy="50" r="7" class="f"/>'),
+    dots: s('<circle cx="34" cy="24" r="8" class="f"/><circle cx="66" cy="24" r="8" class="f"/><circle cx="34" cy="50" r="8" class="f"/><circle cx="66" cy="50" r="8"/><circle cx="34" cy="76" r="8"/><circle cx="66" cy="76" r="8" class="f"/>'),
+    candle: s('<rect x="38" y="44" width="24" height="46" rx="3"/><path d="M50 44 V36"/><path class="f" d="M50 10 C58 20 60 28 50 36 C40 28 42 20 50 10Z"/>'),
+    lantern: s('<path d="M50 6 V16 M40 16 H60"/><path class="f" d="M30 30 C30 20 70 20 70 30 V70 C70 80 30 80 30 70Z"/><path d="M30 30 C30 20 70 20 70 30 V70 C70 80 30 80 30 70Z M44 22 C40 40 40 60 44 78 M56 22 C60 40 60 60 56 78"/><path d="M40 80 H60 M46 84 V94 M54 84 V94"/>'),
+    gear: s('<path class="f" d="M44 8 H56 L58 20 L68 24 L78 16 L86 24 L78 34 L82 44 L94 46 V56 L82 58 L78 68 L86 78 L78 86 L68 78 L58 82 L56 94 H44 L42 82 L32 78 L22 86 L14 78 L22 68 L18 58 L6 56 V46 L18 44 L22 34 L14 24 L22 16 L32 24 L42 20Z"/><circle cx="50" cy="51" r="14"/>'),
+    tooth: s('<path class="f" d="M30 14 C40 14 44 20 50 20 C56 20 60 14 70 14 C82 14 88 26 84 42 C80 56 76 60 74 74 C72 88 62 90 60 78 C58 66 56 60 50 60 C44 60 42 66 40 78 C38 90 28 88 26 74 C24 60 20 56 16 42 C12 26 18 14 30 14Z"/><path d="M34 28 C38 26 42 28 44 30" opacity=".7"/>'),
+    note: s('<path d="M38 74 V20 L82 12 V64"/><ellipse class="f" cx="28" cy="76" rx="12" ry="9"/><ellipse class="f" cx="72" cy="66" rx="12" ry="9"/><path d="M38 34 L82 26"/>'),
+    palette: s('<path class="f" d="M50 10 C26 10 10 28 10 50 C10 72 26 90 46 90 C54 90 56 84 52 78 C48 72 52 64 60 64 H74 C84 64 90 58 90 48 C90 26 72 10 50 10Z"/><circle cx="30" cy="46" r="6" class="k" opacity=".8"/><circle cx="40" cy="28" r="6" class="k" opacity=".6"/><circle cx="62" cy="26" r="6" class="k" opacity=".8"/><circle cx="76" cy="42" r="6" class="k" opacity=".6"/>'),
+    people: s('<circle cx="30" cy="30" r="10" class="f"/><circle cx="70" cy="30" r="10" class="f"/><circle cx="50" cy="40" r="12"/><path class="f" d="M12 78 C12 60 22 50 30 50 C36 50 40 54 42 58"/><path class="f" d="M88 78 C88 60 78 50 70 50 C64 50 60 54 58 58"/><path d="M28 90 C28 70 38 60 50 60 C62 60 72 70 72 90"/>'),
+    pi: s('<path d="M14 30 C14 22 20 18 28 18 H88"/><path class="f" stroke="none" d="M34 20 H44 C42 50 38 72 26 88 L16 84 C28 66 32 46 34 20Z"/><path d="M62 18 C60 46 60 66 66 80 C70 88 80 88 86 78"/>'),
+    clover: s('<circle class="f" cx="50" cy="30" r="16"/><circle class="f" cx="30" cy="52" r="16"/><circle class="f" cx="70" cy="52" r="16"/><path d="M50 56 C52 70 56 82 64 92"/>'),
+    infinity: s('<path class="f" d="M50 50 C38 30 12 30 12 50 C12 70 38 70 50 50 C62 30 88 30 88 50 C88 70 62 70 50 50Z"/><path d="M50 50 C38 30 12 30 12 50 C12 70 38 70 50 50 C62 30 88 30 88 50 C88 70 62 70 50 50Z"/>'),
+    pinwheel: s('<path class="f" d="M50 48 L50 12 C68 12 72 32 50 48Z M52 50 L88 50 C88 68 68 72 52 50Z"/><path d="M48 50 L12 50 C12 32 32 28 48 50Z M50 52 L50 70 C38 72 32 62 50 52Z"/><path d="M50 52 V94"/><circle cx="50" cy="50" r="3.5" class="k"/>'),
+    feather: s('<path class="f" d="M80 12 C50 14 26 36 24 70 L30 76 C62 74 86 50 80 12Z"/><path d="M14 90 L64 32 M44 56 H60 M36 66 H50"/>'),
+    coins: s('<ellipse cx="38" cy="70" rx="24" ry="9"/><path d="M14 70 V80 C14 85 26 89 38 89 C50 89 62 85 62 80 V70"/><ellipse class="f" cx="62" cy="38" rx="24" ry="9"/><path d="M38 38 V62 M86 38 V62 C86 67 74 71 62 71"/><path d="M38 50 C38 55 50 59 62 59 C74 59 86 55 86 50"/>'),
+    globe: s('<circle cx="50" cy="50" r="38"/><path class="f" stroke="none" d="M30 26 C40 22 46 30 42 38 C38 46 28 44 26 52 C24 60 16 56 14 50 C14 40 20 32 30 26Z M58 46 C66 42 76 48 76 58 C76 70 66 80 58 76 C52 72 56 64 54 58 C52 52 52 48 58 46Z"/><path d="M12 50 H88 M50 12 C36 30 36 70 50 88 C64 70 64 30 50 12" opacity=".5"/>'),
+    runner: s('<circle cx="62" cy="16" r="9" class="f"/><path d="M40 34 L58 30 L68 46 L82 50 M58 30 L48 58 L64 70 L58 90 M48 58 L32 70 L16 66"/>'),
+    speech: s('<path class="f" d="M16 20 H84 C88 20 90 22 90 26 V60 C90 64 88 66 84 66 H44 L26 82 V66 H16 C12 66 10 64 10 60 V26 C10 22 12 20 16 20Z"/><path d="M30 38 C34 34 34 50 30 46 M46 34 C52 28 52 56 46 50 M62 30 C70 22 70 62 62 54"/>'),
+    tree: s('<path class="f" d="M50 8 L80 50 H64 L84 76 H16 L36 50 H20Z"/><path d="M50 76 V94"/>'),
+    cap: s('<path class="f" d="M50 20 L94 38 L50 56 L6 38Z"/><path d="M26 46 V66 C26 74 38 80 50 80 C62 80 74 74 74 66 V46 M88 40 V66"/><circle cx="88" cy="70" r="4" class="k"/>'),
+    bus: s('<rect class="f" x="14" y="16" width="72" height="62" rx="10"/><path d="M14 46 H86 M24 26 H76 V46 H24Z M50 26 V46"/><circle cx="30" cy="80" r="8" class="k"/><circle cx="70" cy="80" r="8" class="k"/><path d="M22 62 H32 M68 62 H78"/>')
+  }
+})()

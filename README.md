@@ -23,7 +23,9 @@ affiliated with or endorsed by Screenly.
 
 ## Apps
 
-**Our own:** lunch-menu (five rolling school days from a Google Calendar, banner images
+**Our own:** observances (heritage/awareness months, school weeks and days, one animated
+slide each, shown automatically when current; edit `apps/observances/data.js` to add or change
+one), lunch-menu (five rolling school days from a Google Calendar, banner images
 picked from `media/`; see `apps/lunch-menu/apps-script/` for a private calendar).
 
 **Adapted from Screenly-Labs:** birthday, capitals, clock, menu-board, missing-children, moon, on-this-day, opening-hours,
