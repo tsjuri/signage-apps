@@ -25,29 +25,38 @@ for (const w of [500, 600, 800]) {
 
 const images = readdirSync(MEDIA).filter((f) => /\.(jpe?g|png|webp|gif|svg)$/i.test(f)).sort()
 const label = (f) => f.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-const imageSetting = (n, def) => ({
+const imageSetting = (n) => ({
   type: 'string',
   title: `Banner image ${n}`,
-  ...(n === 1 ? { description: 'Ignored when the calendar feed has a photo folder: then the photos in that Drive folder are shown.' } : {}),
-  default: images.includes(def) ? def : '',
-  enum: ['none', ...images],
-  'x-enumLabels': ['(none)', ...images.map(label)]
+  ...(n === 1 ? { description: 'Standard picks images that fit the meal. Ignored when the calendar feed has a photo folder: then the photos in that Drive folder are shown.' } : {}),
+  default: 'standard',
+  enum: ['standard', 'none', ...images],
+  'x-enumLabels': ['Standard for the meal', '(none)', ...images.map(label)]
 })
-const defaults = ['fruit.svg', 'tacos.svg', 'burger.svg', 'salad.svg', 'pizza.svg']
 
 const manifest = {
   manifestVersion: '1',
   id: 'lunch-menu',
-  name: 'Lunch Menu',
+  name: 'Menu',
   description:
-    'A lunch menu for the next five school days, read from a Google Calendar and rolling forward every day so the left column is always today. A banner of food photos frames the title. Enter each day as one all-day event: the dish in the title, sides in the description, one per line. Banner photos can come from a shared Google Drive folder.',
-  summary: 'This week’s school lunches, straight from the calendar.',
+    'The breakfast or lunch menu for the next five school days, read from a Google Calendar and rolling forward every day so the left column is always today. One calendar can hold both: events titled “Breakfast: …” or “Lunch: …” (no prefix counts as lunch). The sides go in the description, one per line. Add the app once per meal. The district’s Apps Script also gives food service an upload page for the monthly menus.',
+  summary: 'This week’s school breakfast or lunch, straight from the calendar.',
   tags: ['Menu', 'School', 'Calendar'],
   playback: { pacing: 'fixed', refreshIntervalS: 3600 },
   settings: {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     type: 'object',
     properties: {
+      // First, and keeping its labels: Anthias names the new asset after it
+      // ("Lunch menu" / "Breakfast menu"), which tells the two assets apart.
+      meal: {
+        type: 'string',
+        title: 'Meal',
+        default: 'lunch',
+        enum: ['lunch', 'breakfast'],
+        'x-enumLabels': ['Lunch menu', 'Breakfast menu'],
+        'x-asset-name': true
+      },
       source: {
         type: 'string',
         title: 'Calendar feed URL',
@@ -70,20 +79,20 @@ const manifest = {
       heading: {
         type: 'string',
         title: 'Big title',
-        description: 'Use | for a line break, e.g. Lunch|Menu',
-        default: 'Lunch|Menu',
+        description: 'Leave empty for “Lunch Menu” or “Breakfast Menu”. Use | for a line break, e.g. Lunch|Menu',
+        default: '',
         'x-widget': 'text'
       },
-      img1: imageSetting(1, defaults[0]),
-      img2: imageSetting(2, defaults[1]),
-      img3: imageSetting(3, defaults[2]),
-      img4: imageSetting(4, defaults[3]),
-      img5: imageSetting(5, defaults[4])
+      img1: imageSetting(1),
+      img2: imageSetting(2),
+      img3: imageSetting(3),
+      img4: imageSetting(4),
+      img5: imageSetting(5)
     }
   },
   launch: {
     baseUrl: 'https://example.invalid/lunch-menu/',
-    template: '{?source,calendarId,apiKey,eyebrow,heading,img1,img2,img3,img4,img5}'
+    template: '{?meal,source,calendarId,apiKey,eyebrow,heading,img1,img2,img3,img4,img5}'
   }
 }
 writeFileSync(join(DIST, '.well-known/signage-app.json'), `${JSON.stringify(manifest, null, 2)}\n`)

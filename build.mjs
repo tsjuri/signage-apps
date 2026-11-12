@@ -93,6 +93,7 @@ function writeManifest(id, src, out) {
   // tiny script in the page turns a label back into the value the app expects.
   const map = {}
   for (const [key, sch] of Object.entries(clean.settings?.properties ?? {})) {
+    if (sch['x-asset-name']) { delete sch['x-asset-name']; continue } // this one should name the asset
     if (!sch.enum || !sch['x-enumLabels']) continue
     const labels = sch.enum.map((v, i) => sch['x-enumLabels'][i] || (v === '' ? 'Default' : String(v)))
     if (new Set(labels).size !== labels.length) continue

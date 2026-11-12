@@ -32,8 +32,10 @@ to them in its Google Sheet; template in `apps/observances-sheet/`; the slides t
 `shared/observances/data.js`, shared with trivia-facts and on-this-day), learning-clock (an analog clock that teaches kids to read it: coloured hands, minute ring,
 "past"/"to" halves, the time in words and how to read each hand), on-this-day (138 built-in school-friendly facts in `apps/on-this-day/facts.js`, plus the school's
 own history from the On This Day tab of its sheet, which comes first: today's entries, else one
-from this week, else another; nothing from the internet), lunch-menu (five rolling school days from a Google Calendar, banner images
-picked from `media/`; see `apps/lunch-menu/apps-script/` for a private calendar).
+from this week, else another; nothing from the internet), lunch-menu (shown as "Menu": breakfast or lunch for five rolling school days from one Google
+Calendar, events titled "Breakfast: …" / "Lunch: …"; banner images picked from `media/`;
+`apps/lunch-menu/apps-script/Menu.gs` is the feed for a private calendar plus an upload page that
+reads food service's monthly .docx menus into the calendar; `tools/menu-to-ics.py` does the same offline).
 
 **Adapted from Screenly-Labs:** birthday, capitals, clock, moon, quotes, timer, word, world-clock.
 Quotes uses a school-filtered set (`apps/quotes/docs/SCHOOL.md`) and, like trivia-facts, can add

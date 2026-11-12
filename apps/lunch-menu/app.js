@@ -3,11 +3,13 @@
  * Settings arrive in the URL (Anthias builds it from the app's settings form):
  *   source     Apps Script web-app URL (for a district-only calendar)   — or —
  *   calendarId + apiKey   a public Google Calendar via the Calendar API
- *   eyebrow, heading      banner text ("Calendar" / "Lunch Menu")
- *   img1..img5            file names from the shared media/ folder
+ *   meal                  lunch (default) | breakfast: which events to show
+ *   eyebrow, heading      banner text ("Calendar" / "Lunch Menu"; empty heading = by meal)
+ *   img1..img5            file names from the shared media/ folder ("standard" = by meal)
  *   days                  how many school days to show (default 5)
  *
- * One calendar entry per day is the expected shape: the title is the main dish,
+ * One calendar entry per day per meal: the title is the main dish, prefixed
+ * "Breakfast:" or "Lunch:" when one calendar holds both (no prefix = lunch);
  * the description (optional) adds the sides, one per line. Several entries on
  * one day are shown one under the other.
  */
@@ -17,9 +19,10 @@
   var params = new URLSearchParams(window.location.search)
   var get = function (k) { return (params.get(k) || '').trim() }
 
+  var MEAL = get('meal') === 'breakfast' ? 'breakfast' : 'lunch'
   var DAYS = Math.min(Math.max(parseInt(get('days'), 10) || 5, 1), 7)
   var REFRESH_MS = 15 * 60 * 1000
-  var CACHE_KEY = 'lunch-menu:' + (get('source') || get('calendarId') || 'demo')
+  var CACHE_KEY = 'lunch-menu:' + MEAL + ':' + (get('source') || get('calendarId') || 'demo')
 
   // ---------- dates ----------
   var pad = function (n) { return (n < 10 ? '0' : '') + n }
@@ -62,7 +65,11 @@
     var byDay = {}
     events.forEach(function (e) {
       if (!e || !e.date) return
-      ;(byDay[e.date] = byDay[e.date] || []).push({ title: plain(e.title), description: plain(e.description) })
+      var title = plain(e.title)
+      var m = /^\s*(breakfast|lunch)\s*[:\-–—]\s*/i.exec(title)
+      if ((m ? m[1].toLowerCase() : 'lunch') !== MEAL) return
+      if (m) title = title.slice(m[0].length)
+      ;(byDay[e.date] = byDay[e.date] || []).push({ title: title, description: plain(e.description) })
     })
     return byDay
   }
@@ -116,10 +123,18 @@
     ['School Closed', ''],
     ['Boneless Chicken Wings or\n*Southwest Veggie Bowl*', 'with Roasted Green Beans,\nBaked Potato Wedges\nand Assorted Fruit']
   ]
+  var SAMPLE_BREAKFAST = [
+    ['Pancakes', 'Fruit\nJuice and/or Milk'],
+    ['Breakfast Scramble', 'Fruit\nJuice and/or Milk'],
+    ['Bagel and Cream Cheese', 'Fruit\nJuice and/or Milk'],
+    ['School Closed', ''],
+    ['Waffles', 'Fruit\nJuice and/or Milk']
+  ]
   function sample(days) {
     var out = {}
+    var list = MEAL === 'breakfast' ? SAMPLE_BREAKFAST : SAMPLE
     days.forEach(function (d, i) {
-      var s = SAMPLE[i % SAMPLE.length]
+      var s = list[i % list.length]
       out[ymd(d)] = [{ title: s[0], description: s[1] }]
     })
     return Promise.resolve(out)
@@ -148,22 +163,25 @@
 
   function renderBanner() {
     if (get('eyebrow') || params.has('eyebrow')) $('eyebrow').textContent = get('eyebrow')
-    if (get('heading')) {
+    var heading = get('heading') || (MEAL === 'breakfast' ? 'Breakfast|Menu' : 'Lunch|Menu')
+    {
       var h = $('heading')
       h.textContent = ''
-      get('heading').split(/\s*\|\s*|\n/).forEach(function (line, i) {
+      heading.split(/\s*\|\s*|\n/).forEach(function (line, i) {
         if (i) h.appendChild(document.createElement('br'))
         h.appendChild(document.createTextNode(line))
       })
     }
     for (var i = 1; i <= 5; i++) {
-      var name = params.has('img' + i) ? get('img' + i) : DEFAULT_IMAGES[i - 1]
+      var name = params.has('img' + i) ? get('img' + i) : 'standard'
+      if (name === 'standard') name = (MEAL === 'breakfast' ? BREAKFAST_IMAGES : DEFAULT_IMAGES)[i - 1]
       var img = $('img' + i)
       if (name && name !== 'none') img.src = '../media/' + encodeURIComponent(name)
       else img.removeAttribute('src')
     }
   }
   var DEFAULT_IMAGES = ['fruit.svg', 'tacos.svg', 'burger.svg', 'salad.svg', 'pizza.svg']
+  var BREAKFAST_IMAGES = ['fruit.svg', 'pancakes.svg', 'eggs.svg', 'cereal.svg', 'waffle.svg']
 
   // ---------- banner photos from the feed's Drive folder ----------
   // When the Apps Script feed has a photo folder, its photos replace the images
