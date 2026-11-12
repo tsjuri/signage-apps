@@ -20,22 +20,7 @@
   "settings": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
-    "properties": {
-      "lat": {
-        "type": "number",
-        "title": "Latitude",
-        "description": "Optional. Leave empty for Kingston, NY. Sets the hemisphere the Moon is drawn for. Find it in Google Maps: right-click a spot and click the numbers to copy them (the first is latitude).",
-        "minimum": -90,
-        "maximum": 90
-      },
-      "lng": {
-        "type": "number",
-        "title": "Longitude",
-        "description": "Optional. Leave empty for Kingston, NY. The second of the two numbers from Google Maps.",
-        "minimum": -180,
-        "maximum": 180
-      }
-    }
+    "properties": {}
   },
   "launch": {
     "baseUrl": "https://moon.srly.io/",
