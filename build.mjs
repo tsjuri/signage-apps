@@ -86,6 +86,27 @@ function writeManifest(id, src, out) {
           ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, scrub(x)]))
           : v
   const clean = scrub(m)
+  // Anthias names a new asset after the label of the first dropdown with
+  // x-enumLabels (meant for the RSS Reader's feed), so "On This Day" became
+  // "Gentle". Use the labels themselves as the option values instead, so no
+  // dropdown carries x-enumLabels and the asset gets the app's own name; a
+  // tiny script in the page turns a label back into the value the app expects.
+  const map = {}
+  for (const [key, sch] of Object.entries(clean.settings?.properties ?? {})) {
+    if (!sch.enum || !sch['x-enumLabels']) continue
+    const labels = sch.enum.map((v, i) => sch['x-enumLabels'][i] || (v === '' ? 'Default' : String(v)))
+    if (new Set(labels).size !== labels.length) continue
+    map[key] = Object.fromEntries(labels.map((l, i) => [l, sch.enum[i]]))
+    if ('default' in sch) sch.default = labels[sch.enum.indexOf(sch.default)] ?? labels[0]
+    sch.enum = labels
+    delete sch['x-enumLabels']
+  }
+  const page = join(out, 'index.html')
+  if (Object.keys(map).length && existsSync(page)) {
+    const fix = `<script>(function(){var M=${JSON.stringify(map)},p=new URLSearchParams(location.search),n=0;for(var k in M){var v=p.get(k);if(v!==null&&Object.prototype.hasOwnProperty.call(M[k],v)){p.set(k,M[k][v]);n++}}if(n)history.replaceState(null,'',location.pathname+'?'+p+location.hash)})()</script>`
+    const html = readFileSync(page, 'utf8')
+    writeFileSync(page, html.includes('<head>') ? html.replace('<head>', `<head>${fix}`) : fix + html)
+  }
   mkdirSync(join(out, '.well-known'), { recursive: true })
   writeFileSync(join(out, '.well-known/signage-app.json'), `${JSON.stringify(clean, null, 2)}\n`)
   return clean
