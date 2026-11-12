@@ -81,7 +81,7 @@ window.OBSERVANCES = [
     message: 'Making healthy, drug-free choices. Join in the spirit days this week!' },
 
   // ---- November ----
-  { id: 'native-american-heritage', title: 'Native American Heritage Month', type: 'heritage', when: { month: 11 }, icon: 'beadwork', palette: 'amber',
+  { id: 'native-american-heritage', title: 'Native American Heritage Month', type: 'heritage', when: { month: 11 }, icon: 'dreamcatcher', palette: 'amber', // or 'beadwork'
     message: 'Honoring the rich histories, cultures, traditions and contributions of Native peoples.' },
   { id: 'dia-de-los-muertos', title: 'Día de los Muertos', type: 'holiday', when: { range: [11, 1, 11, 2] }, icon: 'skull', palette: 'sunrise',
     message: 'The Day of the Dead: families in Mexico and beyond lovingly remember those who came before them, with marigolds, candles, photos and favorite foods.' },
