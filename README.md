@@ -70,7 +70,11 @@ service, switches the viewer's browser to software rendering
 (`QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu --disable-gpu-compositing`), and restarts both.
 Software rendering is there for Intel Atom "Cherry Trail" players such as the Compute Stick
 STK1AW32SC: with GPU rendering, any animated page hard-froze the machine in the i915 driver.
-Skip it on players with a solid GPU stack: `SOFTWARE_RENDERING=0`. **Re-run it after every Anthias upgrade**, which regenerates
+Skip it on players with a solid GPU stack: `SOFTWARE_RENDERING=0`.
+It also makes new assets run "forever" (until an end date is set): Anthias hard-codes new assets'
+end date to today + 30 days, and the script changes that inside the `anthias-server` container to
+~100 years. Skip with `FOREVER=0`. The change lives in the container, so an upgrade undoes it; the
+script says so if Anthias's code has changed and it can't apply it. **Re-run it after every Anthias upgrade**, which regenerates
 `docker-compose.yml`. Source: `stick/apply-catalog.sh`.
 
 Assets already added keep working either way: an installed app is stored as its full URL.

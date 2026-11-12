@@ -9,14 +9,21 @@
 #
 #   curl -fsSL https://tsjuri.github.io/signage-apps/apply-catalog.sh | bash
 #
+# New assets, "forever": Anthias gives every new asset an end date of today + 30
+# days, hard-coded in its server (four places in app/views.py). This script
+# changes that inside the running anthias-server container to ~100 years, so
+# assets run until someone sets an end date. Skip it with FOREVER=0.
+#
 # Safe to run more than once. Re-run it after every Anthias upgrade, because
-# the upgrade regenerates docker-compose.yml.
+# the upgrade regenerates docker-compose.yml and replaces the container (which
+# undoes the end-date change).
 set -euo pipefail
 
 INDEX_URL="${INDEX_URL:-https://tsjuri.github.io/signage-apps/manifest.json}"
 HOSTS="${HOSTS:-tsjuri.github.io,.srly.io,.signage-apps.com}"
 DIR="${ANTHIAS_DIR:-$HOME/anthias}"
 SOFTWARE_RENDERING="${SOFTWARE_RENDERING:-1}"
+FOREVER="${FOREVER:-1}"
 GPU_FLAGS='--disable-gpu --disable-gpu-compositing'
 
 patch() {
@@ -51,6 +58,23 @@ cd "$DIR"
 FILES=(-f docker-compose.yml)
 [[ -f docker-compose.ssl.override.yml ]] && FILES+=(-f docker-compose.ssl.override.yml)
 sudo -E docker compose "${FILES[@]}" up -d anthias-server anthias-viewer
+
+if [[ "$FOREVER" == "1" ]]; then
+  CTR="$(sudo docker compose "${FILES[@]}" ps -q anthias-server)"
+  VIEWS="$(sudo docker exec "$CTR" sh -c 'f=/usr/src/app/src/anthias_server/app/views.py; [ -f "$f" ] || f=$(find / -xdev -path "*/anthias_server/app/views.py" 2>/dev/null | head -n 1); echo "$f"')"
+  OLD='end_date=now + timedelta(days=30)'
+  NEW='end_date=now + timedelta(days=36500)'
+  if [[ -n "$VIEWS" ]] && sudo docker exec "$CTR" grep -qF "$OLD" "$VIEWS"; then
+    sudo docker exec "$CTR" sed -i "s/end_date=now + timedelta(days=30)/end_date=now + timedelta(days=36500)/g" "$VIEWS"
+    sudo -E docker compose "${FILES[@]}" restart anthias-server
+    echo "✓ new assets now run forever (until an end date is set)"
+  elif [[ -n "$VIEWS" ]] && sudo docker exec "$CTR" grep -qF "$NEW" "$VIEWS"; then
+    echo "✓ new assets already run forever"
+  else
+    echo "!! Could not find Anthias's 30-day default end date (its code may have changed);" >&2
+    echo "   new assets still end after 30 days. Nothing was changed." >&2
+  fi
+fi
 
 echo
 echo "Done. In the dashboard, Add -> Apps now lists the apps from:"
