@@ -32,10 +32,11 @@ slide each, shown automatically when current; edit `apps/observances/data.js` to
 one), lunch-menu (five rolling school days from a Google Calendar, banner images
 picked from `media/`; see `apps/lunch-menu/apps-script/` for a private calendar).
 
-**Adapted from Screenly-Labs:** birthday, capitals, clock, moon, on-this-day, quotes, team-milestone, timer, word, world-clock.
+**Adapted from Screenly-Labs:** birthday, capitals, clock, moon, quotes, team-milestone, timer, word, world-clock.
 
 Not included (they need a server, an API key or a scheduled scraper): air quality, weather,
-RSS, Product Hunt, Silver Alert.
+RSS, Product Hunt, Silver Alert. Removed as unsuitable for schools: On This Day (live,
+unfiltered Wikipedia events, including disasters), Missing Children, Menu Board, Opening Hours.
 
 ## Publishing
 
