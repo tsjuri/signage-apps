@@ -235,3 +235,83 @@
    (it sets data-state), so the placeholder text in the HTML never flashes. */
 .stage { transition: opacity 0.5s ease; }
 html:not([data-state]) .stage { opacity: 0; }
+
+/* ---- signage-apps: several names, balloons, fireworks -------------------- */
+.names { display: inline-grid; vertical-align: bottom; overflow: hidden; }
+.names > * { grid-area: 1 / 1; }
+.names__sizer { visibility: hidden; }
+.names__one { transform: translateY(105%); opacity: 0; transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.8s ease; }
+.names__one.is-in { transform: none; opacity: 1; }
+.names__one.is-out { transform: translateY(-105%); opacity: 0; }
+.motion-none .names__one { transition: none; }
+
+.fx { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+
+.balloon {
+  position: absolute;
+  left: var(--left);
+  bottom: -30vh;
+  width: calc(7vmin * var(--size));
+  height: calc(8.6vmin * var(--size));
+  border-radius: 50% 50% 48% 48% / 56% 56% 44% 44%;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.55) 0 12%, transparent 13%), var(--color);
+  animation: balloon-up var(--dur) linear var(--delay) infinite;
+  opacity: 0.92;
+}
+.balloon::before { /* knot */
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -0.8vmin;
+  border: 0.8vmin solid transparent;
+  border-bottom-color: var(--color);
+  transform: translateX(-50%);
+}
+.balloon::after { /* string */
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 2px;
+  height: calc(12vmin * var(--size));
+  background: rgba(255, 248, 236, 0.55);
+  transform-origin: top;
+  animation: string-sway 2.4s ease-in-out infinite alternate;
+}
+@keyframes balloon-up {
+  0% { transform: translate(0, 0) rotate(-3deg); }
+  50% { transform: translate(var(--sway), -75vh) rotate(3deg); }
+  100% { transform: translate(0, -150vh) rotate(-3deg); }
+}
+@keyframes string-sway { from { transform: translateX(-50%) rotate(-8deg); } to { transform: translateX(-50%) rotate(8deg); } }
+
+.firework { position: absolute; width: 0; height: 0; }
+.firework i {
+  position: absolute;
+  left: -0.35vmin;
+  top: -1.8vmin;
+  width: 0.7vmin;
+  height: 3.6vmin;
+  border-radius: 1vmin;
+  background: linear-gradient(to bottom, var(--color), transparent);
+  box-shadow: 0 0 1.4vmin var(--color);
+  transform: translate(0, 0) rotate(var(--angle)) scaleY(0.2);
+  animation: spark 1.7s cubic-bezier(0.12, 0.7, 0.3, 1) forwards;
+}
+.firework b {
+  position: absolute;
+  left: -4vmin;
+  top: -4vmin;
+  width: 8vmin;
+  height: 8vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 15%, var(--color) 35%, transparent 70%);
+  animation: flash 0.6s ease-out forwards;
+}
+@keyframes spark {
+  0% { transform: translate(0, 0) rotate(var(--angle)) scaleY(0.2); opacity: 1; }
+  60% { opacity: 1; }
+  100% { transform: translate(var(--dx), calc(var(--dy) + 5vmin)) rotate(var(--angle)) scaleY(1); opacity: 0; }
+}
+@keyframes flash { from { transform: scale(0.3); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
+.motion-none .confetti__bit { animation: none; top: var(--top); transform: translateX(var(--drift)) rotate(var(--rotate)); }

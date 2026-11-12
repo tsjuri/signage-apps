@@ -27,10 +27,27 @@ const EXAMPLE = 'name=Alex&message=Have+an+amazing+day!&from=The+Office'
 const CONFETTI_COUNT = 60
 const CONFETTI_COUNT_LEGACY = 24
 
+// signage-apps: Motion (gentle | full | none) and Celebration (surprise |
+// confetti | balloons | fireworks | all). Motion: None gets a still confetti
+// scatter only.
+const query = new URLSearchParams(window.location.search)
+const pick = <T extends string>(v: string | null, allowed: readonly T[], fallback: T): T =>
+  allowed.includes(v as T) ? (v as T) : fallback
+const MOTION = pick(query.get('motion'), ['gentle', 'full', 'none'] as const, 'gentle')
+// The Motion setting decides, not the kit's "weak device" guess (any player with
+// 2 GB or 2 cores, which includes the Compute Sticks that run this fine on Gentle).
+if (MOTION !== 'none') document.documentElement.classList.remove('legacy')
+const STILL = (): boolean => MOTION === 'none'
+const CELEBRATIONS = ['confetti', 'balloons', 'fireworks', 'all'] as const
+const chosen = pick(query.get('celebration'), [...CELEBRATIONS, 'surprise'] as const, 'surprise')
+const CELEBRATION =
+  chosen === 'surprise' ? CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)] : chosen
+const FULL = MOTION === 'full'
+
 const confettiCount = (): number =>
   document.documentElement.classList.contains('legacy')
     ? CONFETTI_COUNT_LEGACY
-    : CONFETTI_COUNT
+    : FULL ? CONFETTI_COUNT : 36
 
 const text = (id: string, value: string): void => {
   const el = document.getElementById(id)
@@ -49,15 +66,124 @@ const setLine = (id: string, value: string): void => {
 const render = (params: URLSearchParams): void => {
   const config = parseConfig(params)
 
-  const greeting = formatGreeting(config.name)
-  text('greeting', greeting)
+  showNames(config.names)
   setLine('message', config.message)
   setLine('from', formatSignature(config.from))
 
   document.title = config.name ? `Happy Birthday, ${config.name}!` : 'Happy Birthday!'
 
-  scatterConfetti()
+  document.documentElement.classList.add(`motion-${STILL() ? 'none' : MOTION}`)
+  const all = CELEBRATION === 'all'
+  if (STILL() || all || CELEBRATION === 'confetti') scatterConfetti()
+  if (!STILL() && (all || CELEBRATION === 'balloons')) releaseBalloons(all)
+  if (!STILL() && (all || CELEBRATION === 'fireworks')) startFireworks(all)
   document.documentElement.dataset.state = 'ready'
+}
+
+// The greeting, with one name at a time when there are several: every few
+// seconds the name scrolls up and the next one comes in from below.
+const NAME_SECONDS = 3.5
+const showNames = (names: string[]): void => {
+  const h = document.getElementById('greeting')
+  if (!h) return
+  if (names.length < 2) {
+    h.textContent = formatGreeting(names[0] ?? '')
+    return
+  }
+  const lead = document.createElement('span')
+  lead.className = 'greeting__lead'
+  lead.textContent = 'Happy Birthday,'
+  const box = document.createElement('span')
+  box.className = 'names'
+  const make = (n: string): HTMLSpanElement => {
+    const el = document.createElement('span')
+    el.className = 'names__one'
+    el.textContent = `${n}!`
+    return el
+  }
+  // The box is as wide as the longest name, so the line doesn't jump about.
+  const sizer = make(names.reduce((a, b) => (b.length > a.length ? b : a)))
+  sizer.classList.add('names__sizer')
+  let i = 0
+  let current = make(names[0])
+  current.classList.add('is-in')
+  box.replaceChildren(sizer, current)
+  h.replaceChildren(lead, document.createTextNode(' '), box)
+  window.setInterval(() => {
+    i = (i + 1) % names.length
+    const next = make(names[i])
+    box.appendChild(next)
+    const old = current
+    old.classList.remove('is-in')
+    old.classList.add('is-out')
+    // next frame, so the browser sees the start position first
+    window.setTimeout(() => next.classList.add('is-in'), 30)
+    window.setTimeout(() => old.remove(), 900)
+    current = next
+  }, NAME_SECONDS * 1000)
+}
+
+const COLORS = ['#f6c453', '#ff6b9d', '#6ad3c9', '#ff8c66', '#c8a2ff', '#7fb4ff']
+
+// Balloons drifting up past the card, each with its own colour, size, speed and
+// sway. Negative delays fill the screen from the first frame.
+const releaseBalloons = (withOthers: boolean): void => {
+  const fx = document.getElementById('fx')
+  if (!fx) return
+  const count = (FULL ? 12 : 8) - (withOthers ? 3 : 0)
+  for (let k = 0; k < count; k++) {
+    const b = document.createElement('span')
+    b.className = 'balloon'
+    const dur = 11 + Math.random() * 7
+    // keep to the sides, clear of the greeting in the middle
+    const lane = (k + Math.random() * 0.8) / count
+    b.style.setProperty('--left', `${lane < 0.5 ? lane * 2 * 26 + 1 : 73 + (lane - 0.5) * 2 * 24}%`)
+    b.style.setProperty('--dur', `${dur}s`)
+    b.style.setProperty('--delay', `${-Math.random() * dur}s`)
+    b.style.setProperty('--size', `${0.8 + Math.random() * 0.6}`)
+    b.style.setProperty('--sway', `${(Math.random() * 2 - 1) * 4}vw`)
+    b.style.setProperty('--color', COLORS[k % COLORS.length])
+    fx.appendChild(b)
+  }
+}
+
+// Firework bursts popping now and then, away from the middle where the card is.
+const startFireworks = (withOthers: boolean): void => {
+  const fx = document.getElementById('fx')
+  if (!fx) return
+  const sparks = FULL ? 20 : 14
+  const burst = (): void => {
+    const side = Math.random() < 0.5
+    const x = side ? 6 + Math.random() * 24 : 70 + Math.random() * 24
+    const y = 10 + Math.random() * 45
+    const color = COLORS[Math.floor(Math.random() * COLORS.length)]
+    const g = document.createElement('span')
+    g.className = 'firework'
+    g.style.left = `${x}%`
+    g.style.top = `${y}%`
+    const color2 = COLORS[Math.floor(Math.random() * COLORS.length)]
+    const reach = 15 + Math.random() * 8
+    // two rings of streaks, pointing outward: a big one and a smaller, offset one
+    for (const [ring, n, c] of [[1, sparks, color], [0.55, Math.round(sparks * 0.6), color2]] as const) {
+      for (let k = 0; k < n; k++) {
+        const s = document.createElement('i')
+        const a = (k / n) * Math.PI * 2 + (ring < 1 ? Math.PI / n : 0)
+        s.style.setProperty('--dx', `${Math.cos(a) * reach * ring}vmin`)
+        s.style.setProperty('--dy', `${Math.sin(a) * reach * ring}vmin`)
+        s.style.setProperty('--angle', `${(a * 180) / Math.PI + 90}deg`)
+        s.style.setProperty('--color', c)
+        g.appendChild(s)
+      }
+    }
+    const flash = document.createElement('b')
+    flash.style.setProperty('--color', color)
+    g.appendChild(flash)
+    fx.appendChild(g)
+    window.setTimeout(() => g.remove(), 1800)
+  }
+  burst()
+  window.setTimeout(burst, 500)
+  window.setInterval(burst, (FULL ? 900 : 1400) + (withOthers ? 600 : 0))
 }
 
 // Build the confetti DOM from the pure layout helper, handing each scrap its

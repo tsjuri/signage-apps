@@ -5,14 +5,23 @@ import {
   DEFAULT_MESSAGE,
   formatGreeting,
   formatSignature,
-  parseConfig
+  parseConfig,
+  splitNames
 } from '../assets/static/js/birthday'
+
+describe('splitNames', () => {
+  test('splits on commas, semicolons, new lines and "and"', () => {
+    expect(splitNames(' Alex, Maria;Sam\nJo and Lee ')).toEqual(['Alex', 'Maria', 'Sam', 'Jo', 'Lee'])
+    expect(splitNames('')).toEqual([])
+  })
+})
 
 describe('parseConfig', () => {
   test('reads and trims every field', () => {
     const params = new URLSearchParams('?name=+Alex+&message=+Have+fun+&from=+The+Team+')
     expect(parseConfig(params)).toEqual({
       name: 'Alex',
+      names: ['Alex'],
       message: 'Have fun',
       from: 'The Team'
     })

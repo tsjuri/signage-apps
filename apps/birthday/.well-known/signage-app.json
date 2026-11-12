@@ -5,19 +5,25 @@
   "description": "A full-screen birthday celebration for digital signage. Shows a big personalised \"Happy Birthday\" greeting under a slow shower of confetti, with an optional message and signature. Set it up for one person per screen — the name, message, and sender all arrive in the launch URL, so one deployment celebrates anyone.",
   "summary": "Celebrate someone's birthday on any display.",
   "vendor": "Screenly",
-  "tags": ["Celebration", "Team", "Fun"],
+  "tags": [
+    "Celebration",
+    "Team",
+    "Fun"
+  ],
   "homepage": "https://birthday.srly.io/",
   "source": "https://github.com/Screenly-Labs/birthday",
   "support": "https://github.com/Screenly-Labs/birthday/issues",
-  "playback": { "pacing": "fixed" },
+  "playback": {
+    "pacing": "fixed"
+  },
   "settings": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "properties": {
       "name": {
         "type": "string",
-        "title": "Name",
-        "description": "Whose birthday it is, e.g. Alex.",
+        "title": "Names",
+        "description": "One or more names, separated by commas, e.g. Alex, Maria, Sam. With several, they take turns.",
         "x-widget": "text"
       },
       "message": {
@@ -31,11 +37,46 @@
         "title": "From",
         "description": "Optional signature, e.g. The Screenly Team.",
         "x-widget": "text"
+      },
+      "celebration": {
+        "type": "string",
+        "title": "Celebration",
+        "default": "surprise",
+        "enum": [
+          "surprise",
+          "confetti",
+          "balloons",
+          "fireworks",
+          "all"
+        ],
+        "x-enumLabels": [
+          "Surprise me",
+          "Confetti",
+          "Balloons",
+          "Fireworks",
+          "All together"
+        ]
+      },
+      "motion": {
+        "type": "string",
+        "title": "Motion",
+        "description": "Gentle suits small players like Intel Compute Sticks. Full adds more of everything; None keeps a still scatter of confetti.",
+        "default": "gentle",
+        "enum": [
+          "gentle",
+          "full",
+          "none"
+        ],
+        "x-enumLabels": [
+          "Gentle",
+          "Full",
+          "None"
+        ]
       }
     }
   },
   "launch": {
     "baseUrl": "https://birthday.srly.io/",
-    "template": "{?name,message,from}"
+    "template": "{?name,message,from,celebration,motion}"
   }
 }

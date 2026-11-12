@@ -8,9 +8,17 @@
 
 export type BirthdayConfig = {
   name: string
+  names: string[] // one or more, from "Alex, Maria" (commas, semicolons or new lines)
   message: string
   from: string
 }
+
+// "Alex, Maria; Sam" -> ['Alex', 'Maria', 'Sam']
+export const splitNames = (raw: string): string[] =>
+  raw
+    .split(/\s*[,;\n]\s*|\s+(?:and|&)\s+/)
+    .map((n) => n.trim())
+    .filter(Boolean)
 
 // Shown when no message is supplied, so the card always has a warm second line.
 export const DEFAULT_MESSAGE = 'Wishing you a wonderful day!'
@@ -20,6 +28,7 @@ export const DEFAULT_MESSAGE = 'Wishing you a wonderful day!'
 // back to the default so the layout never collapses.
 export const parseConfig = (params: URLSearchParams): BirthdayConfig => ({
   name: (params.get('name') ?? '').trim(),
+  names: splitNames(params.get('name') ?? ''),
   message: (params.get('message') ?? '').trim() || DEFAULT_MESSAGE,
   from: (params.get('from') ?? '').trim()
 })
