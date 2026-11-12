@@ -45,11 +45,6 @@ const UPLOADERS = []
 
 const MAX_DAYS = 31 // the feed refuses larger ranges
 
-// Optional: a Drive folder of banner photos for the screens (see the Menu app).
-// The ID is the last part of the folder's URL. Leave empty to use the images
-// picked in the app's settings.
-const PHOTO_FOLDER_ID = ''
-const PHOTO_WIDTH = 700
 
 // ===========================================================================
 // Routing
@@ -95,43 +90,11 @@ function feed(p) {
   return json({ events: events })
 }
 
+// The Menu app also asks for banner photos (?photos=1). This script keeps out of
+// Google Drive on purpose, so it needs no access to anyone's files: no photos,
+// and the screens use the banner images picked in the app's settings.
 function photos() {
-  if (!PHOTO_FOLDER_ID) return json({ photos: [] })
-  const cache = CacheService.getScriptCache()
-  const list = []
-  const it = DriveApp.getFolderById(PHOTO_FOLDER_ID).getFiles()
-  while (it.hasNext()) {
-    const f = it.next()
-    if (/^image\//.test(f.getMimeType())) list.push(f)
-  }
-  list.sort(function (a, b) { return a.getName().localeCompare(b.getName()) })
-  const token = ScriptApp.getOAuthToken()
-  const out = []
-  list.slice(0, 30).forEach(function (f) {
-    const key = 'p:' + f.getId() + ':' + f.getLastUpdated().getTime()
-    let data = cache.get(key)
-    if (!data) {
-      const blob = resized(f, token)
-      if (!blob) return
-      data = 'data:' + (blob.getContentType() || 'image/jpeg') + ';base64,' + Utilities.base64Encode(blob.getBytes())
-      if (data.length < 95000) cache.put(key, data, 3600)
-    }
-    out.push({ name: f.getName(), src: data })
-  })
-  return json({ photos: out })
-}
-
-function resized(f, token) {
-  const auth = { headers: { Authorization: 'Bearer ' + token }, muteHttpExceptions: true }
-  const meta = UrlFetchApp.fetch('https://www.googleapis.com/drive/v3/files/' + f.getId() + '?fields=thumbnailLink&supportsAllDrives=true', auth)
-  if (meta.getResponseCode() === 200) {
-    const link = JSON.parse(meta.getContentText()).thumbnailLink
-    if (link) {
-      const res = UrlFetchApp.fetch(link.replace(/=s\d+$/, '') + '=s' + PHOTO_WIDTH, auth)
-      if (res.getResponseCode() === 200) return res.getBlob()
-    }
-  }
-  return f.getSize() < 400000 ? f.getBlob() : null
+  return json({ photos: [] })
 }
 
 // ===========================================================================
