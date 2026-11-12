@@ -156,3 +156,8 @@
    drop all animation. The generic kill-switch now comes from the kit's preset,
    imported above. Content is already legible without the entrance (it only
    animates the reveal), so this app needs no app-specific resting state. */
+
+/* Nothing shows until the quote has been chosen (main.ts sets data-state),
+   so the page never flashes a placeholder first. */
+.quote { transition: opacity 0.6s ease; }
+html:not([data-state='ready']) .quote { opacity: 0; }
