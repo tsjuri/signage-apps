@@ -53,7 +53,11 @@ curl -fsSL https://tsjuri.github.io/signage-apps/apply-catalog.sh | bash
 ```
 
 This adds `APP_STORE_INDEX_URL` and `APP_STORE_ALLOWED_HOST_SUFFIXES` to the `anthias-server`
-service and restarts it. **Re-run it after every Anthias upgrade**, which regenerates
+service, switches the viewer's browser to software rendering
+(`QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu --disable-gpu-compositing`), and restarts both.
+Software rendering is there for Intel Atom "Cherry Trail" players such as the Compute Stick
+STK1AW32SC: with GPU rendering, any animated page hard-froze the machine in the i915 driver.
+Skip it on players with a solid GPU stack: `SOFTWARE_RENDERING=0`. **Re-run it after every Anthias upgrade**, which regenerates
 `docker-compose.yml`. Source: `stick/apply-catalog.sh`.
 
 Assets already added keep working either way: an installed app is stored as its full URL.
