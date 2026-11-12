@@ -52,9 +52,8 @@ describe('signage-app manifest', () => {
     expect(new URL(manifest.launch.baseUrl).protocol).toBe('https:')
   })
 
-  test('takes no settings, so it carries no launch template', () => {
-    expect('settings' in manifest).toBe(false)
-    expect('template' in manifest.launch).toBe(false)
+  test('has a launch template only together with settings', () => {
+    expect('template' in manifest.launch).toBe('settings' in manifest)
   })
 
   test('is a single-shot page with nothing to pace', () => {

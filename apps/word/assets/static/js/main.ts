@@ -13,13 +13,16 @@ import { isWordEntry, pickIndexForDate, type WordEntry } from './word'
 
 // Shown if the words file can't be fetched or is empty, so the screen is never
 // blank on signage with flaky connectivity.
-const FALLBACK: WordEntry = {
-  word: 'serendipity',
-  pronunciation: '/ˌsɛrənˈdɪpɪti/',
-  definition: 'The occurrence of happy or beneficial events by chance.'
-}
+// Setting: level=elementary (default) uses a list written for young readers, with
+// kid-friendly definitions and an easy pronunciation guide; level=secondary uses
+// the school-filtered general list for middle and high school.
+const ELEMENTARY = new URLSearchParams(window.location.search).get('level') !== 'secondary'
 
-const DATA_URL = '/static/data/words.json'
+const FALLBACK: WordEntry = ELEMENTARY
+  ? { word: 'curious', pronunciation: 'KYOOR-ee-us', definition: 'Wanting to know or learn about something.' }
+  : { word: 'serendipity', pronunciation: '/ˌsɛrənˈdɪpɪti/', definition: 'The happy chance of finding something good without looking for it.' }
+
+const DATA_URL = ELEMENTARY ? '/static/data/words-elementary.json' : '/static/data/words.json'
 
 // Scale the headword down so it fits the stage on one line. The CSS clamp is the
 // upper bound; this only shrinks (never grows past it), so short words stay

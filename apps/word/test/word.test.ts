@@ -87,7 +87,7 @@ describe('words.json dataset', () => {
     const data = await load()
     expect(Array.isArray(data)).toBe(true)
     const words = data as unknown[]
-    expect(words.length).toBeGreaterThanOrEqual(300)
+    expect(words.length).toBeGreaterThanOrEqual(300) // school-filtered: 321
   })
 
   it('contains only well-formed entries', async () => {
@@ -119,6 +119,23 @@ describe('words.json dataset', () => {
       expect(pronunciation.endsWith('/'), `pronunciation missing trailing / for "${word}"`).toBe(
         true
       )
+    }
+  })
+})
+
+describe('words-elementary.json dataset', () => {
+  const load = async (): Promise<WordEntry[]> => Bun.file('assets/static/data/words-elementary.json').json()
+
+  it('has well-formed, unique, short entries with a respelled pronunciation', async () => {
+    const data = await load()
+    expect(data.length).toBeGreaterThanOrEqual(200)
+    const seen = new Set<string>()
+    for (const entry of data) {
+      expect(isWordEntry(entry)).toBe(true)
+      expect(seen.has(entry.word.toLowerCase()), `duplicate "${entry.word}"`).toBe(false)
+      seen.add(entry.word.toLowerCase())
+      expect(entry.definition.length, `definition too long for "${entry.word}"`).toBeLessThanOrEqual(90)
+      expect(entry.pronunciation, `pronunciation for "${entry.word}"`).toMatch(/^[A-Za-z-]+$/)
     }
   })
 })

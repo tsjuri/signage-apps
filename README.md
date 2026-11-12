@@ -37,6 +37,9 @@ picked from `media/`; see `apps/lunch-menu/apps-script/` for a private calendar)
 **Adapted from Screenly-Labs:** birthday, capitals, clock, moon, quotes, timer, word, world-clock.
 Quotes uses a school-filtered set (`apps/quotes/docs/SCHOOL.md`) and, like trivia-facts, can add
 the school's own quotes from a Google Sheet tab (columns Show, Quote, Author), or show only those.
+Word of the Day has a "Words for" setting: Elementary school (our own list of ~200 words with
+kid-friendly definitions and an easy pronunciation guide, `words-elementary.json`) or Middle & high
+school (Screenly's list, filtered to 321 words).
 
 Not included (they need a server, an API key or a scheduled scraper): air quality, weather,
 RSS, Product Hunt, Silver Alert. Removed as unsuitable for schools: the original On This Day (live,

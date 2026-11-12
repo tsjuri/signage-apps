@@ -2,12 +2,36 @@
   "manifestVersion": "1",
   "id": "word",
   "name": "Word of the Day",
-  "description": "A full-screen word of the day for any display. Each day it shows one word, its pronunciation, and its meaning, set in a large serif and chosen fresh from the local date.",
+  "description": "A full-screen word of the day for school displays. Each day it shows one word, how to say it, and what it means, set in a large serif and chosen fresh from the local date. Two lists: one written for elementary school, one for middle and high school.",
   "summary": "A new word every day, on any display.",
   "vendor": "Screenly",
-  "tags": ["Words"],
+  "tags": [
+    "Words"
+  ],
   "homepage": "https://word.srly.io/",
   "source": "https://github.com/Screenly-Labs/word-of-the-day",
   "support": "https://github.com/Screenly-Labs/word-of-the-day/issues",
-  "launch": { "baseUrl": "https://word.srly.io/" }
+  "launch": {
+    "baseUrl": "https://word.srly.io/",
+    "template": "{?level}"
+  },
+  "settings": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "level": {
+        "type": "string",
+        "title": "Words for",
+        "default": "elementary",
+        "enum": [
+          "elementary",
+          "secondary"
+        ],
+        "x-enumLabels": [
+          "Elementary school",
+          "Middle & high school"
+        ]
+      }
+    }
+  }
 }
