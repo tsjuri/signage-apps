@@ -134,17 +134,22 @@ const showNames = (names: string[]): void => {
   current.classList.add('is-in')
   box.replaceChildren(sizer, current)
   h.replaceChildren(lead, document.createTextNode(' '), box)
+  // One after the other, never both at once: the name slides up and out, then
+  // the next one slides up into its place.
+  const OUT_MS = 450
   window.setInterval(() => {
     i = (i + 1) % names.length
-    const next = make(names[i])
-    box.appendChild(next)
     const old = current
     old.classList.remove('is-in')
     old.classList.add('is-out')
-    // next frame, so the browser sees the start position first
-    window.setTimeout(() => next.classList.add('is-in'), 30)
-    window.setTimeout(() => old.remove(), 900)
+    const next = make(names[i])
     current = next
+    window.setTimeout(() => {
+      old.remove()
+      box.appendChild(next)
+      // next frame, so the browser sees the start position first
+      window.setTimeout(() => next.classList.add('is-in'), 30)
+    }, OUT_MS)
   }, nameSeconds(names.length) * 1000)
 }
 

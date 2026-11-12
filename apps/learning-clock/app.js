@@ -50,15 +50,6 @@
   }
   var hourHand = add('line', { class: 'hand hand--hour', x1: C, y1: C, x2: C, y2: C - 40 })
   var minHand = add('line', { class: 'hand hand--min', x1: C, y1: C, x2: C, y2: C - 64 })
-  function tag(cls, label) {
-    var g = add('g', { class: 'tag ' + cls })
-    var w = label.length * 4.4 + 7
-    add('rect', { x: -w / 2, y: -5.2, width: w, height: 10.4 }, g)
-    add('text', { x: 0, y: 0.4 }, g).textContent = label
-    return g
-  }
-  var hourTag = tag('tag--hour', 'HOUR')
-  var minTag = tag('tag--min', 'MINUTES')
   var secHand = SECONDS ? add('line', { class: 'hand hand--sec', x1: C, y1: C + 12, x2: C, y2: C - 72 }) : null
   add('circle', { class: 'pin', cx: C, cy: C, r: 3.6 })
 
@@ -98,7 +89,6 @@
 
   // ---------- drawing the time ----------
   var setHand = function (el, deg) { el.setAttribute('transform', 'rotate(' + deg + ' ' + C + ' ' + C + ')') }
-  var placeTag = function (g, r, deg) { var p = pt(r, deg); g.setAttribute('transform', 'translate(' + p[0].toFixed(2) + ' ' + p[1].toFixed(2) + ')') }
   var on = function (el, yes) { el.classList[yes ? 'add' : 'remove']('on') }
   var last = ''
   function draw() {
@@ -111,8 +101,6 @@
     var hDeg = (h12 % 12 + mm / 60) * 30, mDeg = mm * 6
     setHand(hourHand, hDeg)
     setHand(minHand, mDeg)
-    placeTag(hourTag, 24, hDeg)
-    placeTag(minTag, 47, mDeg)
     for (var h = 1; h <= 12; h++) { on(hbgs[h], h === h12); on(hnums[h], h === h12) }
     var five = Math.floor(mm / 5) * 5
     for (var m = 0; m < 60; m += 5) { on(mbgs[m], m === five); on(mnums[m], m === five) }
