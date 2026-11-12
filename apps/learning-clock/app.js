@@ -1,7 +1,7 @@
 /* Learning Clock — an analog clock that teaches kids to read it.
  *
  * URL settings:
- *   seconds=1   show a second hand (off by default: calmer, lighter on small players)
+ *   seconds=1   show a sweeping second hand (off by default: calmer, lighter on small players)
  *   words       past (default: "quarter past ten") | plain ("ten fifteen")
  *   time        HH:MM — show a fixed time (testing)
  */
@@ -105,7 +105,6 @@
     var now = new Date()
     var hh = FIXED ? +FIXED[1] : now.getHours(), mm = FIXED ? +FIXED[2] : now.getMinutes(), ss = FIXED ? 0 : now.getSeconds()
     var h12 = hh % 12 || 12
-    if (secHand) setHand(secHand, ss * 6)
     var key = hh + ':' + mm
     if (key === last) return
     last = key
@@ -126,10 +125,21 @@
     document.getElementById('how-min').innerHTML = explainMin(mm)
     document.documentElement.dataset.state = 'ready'
   }
+  // The second hand sweeps: one smooth CSS turn per minute, started at the
+  // current second and re-aligned every minute so it never drifts.
+  function sweep() {
+    if (!secHand) return
+    var n = new Date()
+    var into = FIXED ? 0 : n.getSeconds() + n.getMilliseconds() / 1000
+    secHand.style.animation = 'none'
+    void secHand.getBoundingClientRect() // restart the animation
+    secHand.style.animation = 'sweep 60s linear ' + (-into).toFixed(3) + 's infinite'
+  }
   function tick() {
     draw()
+    sweep()
     var n = new Date()
-    setTimeout(tick, SECONDS ? 1000 - n.getMilliseconds() : (60 - n.getSeconds()) * 1000 - n.getMilliseconds() + 20)
+    setTimeout(tick, (60 - n.getSeconds()) * 1000 - n.getMilliseconds() + 20)
   }
   tick()
 })()

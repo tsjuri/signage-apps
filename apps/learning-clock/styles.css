@@ -62,3 +62,7 @@ body { font-family: Poppins, system-ui, sans-serif; color: var(--ink); }
 /* hidden until the script has drawn the real time */
 .stage { transition: opacity 0.4s ease; }
 html:not([data-state]) .stage { opacity: 0; }
+
+/* sweeping second hand: turns around the clock's centre (100,100 in the SVG) */
+.hand--sec { transform-box: view-box; transform-origin: 100px 100px; }
+@keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
