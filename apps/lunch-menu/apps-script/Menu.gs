@@ -1,42 +1,40 @@
-/**
- * School Menu — one Google Apps Script that does two jobs for the signage Menu app:
- *
- *  1. The menu feed for the screens. It reads the (private) menu calendar and
- *     hands out only dates, titles and descriptions for the days asked for.
- *  2. An upload page for whoever keeps the menu. They pick food service's
- *     monthly breakfast and lunch menus (.docx), check what was read, and click
- *     Import. The days go into the calendar as "Breakfast: …" and "Lunch: …".
- *     Importing a month again replaces that month's entries for that meal.
- *
- * The calendar stays private: the script runs as you, its owner.
- *
- * ---------------------------------------------------------------------------
- * Setup (once)
- *   1. Google Calendar → Settings → Add calendar → Create new calendar, e.g.
- *      "School Menu". Under "Settings for my calendars" → that calendar →
- *      "Integrate calendar", copy the Calendar ID and paste it below.
- *   2. https://script.google.com → New project, name it "School Menu".
- *      Replace the code with this whole file. Save.
- *   3. Deploy → New deployment → ⚙ Select type: Web app
- *        Description:    Screens
- *        Execute as:     Me
- *        Who has access: Anyone
- *      Deploy, authorize when asked, copy the Web app URL (ends in /exec).
- *      → This is the "Calendar feed URL" for the Menu app in Anthias.
- *   4. Deploy → New deployment again → Web app
- *        Description:    Upload
- *        Execute as:     Me
- *        Who has access: Anyone within <your district>
- *      Copy this second URL. → This is the upload page. Bookmark it, or send
- *      it to whoever keeps the menu. Only signed-in district accounts get in
- *      (and only the people in UPLOADERS, if you fill that in below).
- *
- * After changing this code: Deploy → Manage deployments → edit (pencil) each
- * deployment → Version: New version → Deploy. The URLs stay the same.
- *
- * Test the feed in a browser:  <Screens URL>?from=2026-11-02&to=2026-11-06
- * ---------------------------------------------------------------------------
- */
+// School Menu — one Google Apps Script that does two jobs for the signage Menu app:
+//
+//  1. The menu feed for the screens. It reads the (private) menu calendar and
+//     hands out only dates, titles and descriptions for the days asked for.
+//  2. An upload page for whoever keeps the menu. They pick food service's
+//     monthly breakfast and lunch menus (.docx), check what was read, and click
+//     Import. The days go into the calendar as "Breakfast: …" and "Lunch: …".
+//     Importing a month again replaces that month's entries for that meal.
+//
+// The calendar stays private: the script runs as you, its owner.
+//
+// ---------------------------------------------------------------------------
+// Setup (once)
+//   1. Google Calendar → Settings → Add calendar → Create new calendar, e.g.
+//      "School Menu". Under "Settings for my calendars" → that calendar →
+//      "Integrate calendar", copy the Calendar ID and paste it below.
+//   2. https://script.google.com → New project, name it "School Menu".
+//      Replace the code with this whole file. Save.
+//   3. Deploy → New deployment → ⚙ Select type: Web app
+//        Description:    Screens
+//        Execute as:     Me
+//        Who has access: Anyone
+//      Deploy, authorize when asked, copy the Web app URL (ends in /exec).
+//      → This is the "Calendar feed URL" for the Menu app in Anthias.
+//   4. Deploy → New deployment again → Web app
+//        Description:    Upload
+//        Execute as:     Me
+//        Who has access: Anyone within <your district>
+//      Copy this second URL. → This is the upload page. Bookmark it, or send
+//      it to whoever keeps the menu. Only signed-in district accounts get in
+//      (and only the people in UPLOADERS, if you fill that in below).
+//
+// After changing this code: Deploy → Manage deployments → edit (pencil) each
+// deployment → Version: New version → Deploy. The URLs stay the same.
+//
+// Test the feed in a browser:  <Screens URL>?from=2026-11-02&to=2026-11-06
+// ---------------------------------------------------------------------------
 
 const CALENDAR_ID = 'PASTE-THE-MENU-CALENDAR-ID-HERE@group.calendar.google.com'
 
