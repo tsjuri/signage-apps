@@ -19,7 +19,7 @@ import {
 // Shown when the page is opened with no settings (e.g. the store preview or a
 // bare visit), so the card is never blank and demonstrates the format. Real
 // deployments carry the celebration in the launch URL's query string.
-const EXAMPLE = 'name=Alex&message=Have+an+amazing+day!&from=The+Screenly+Team'
+const EXAMPLE = 'name=Alex&message=Have+an+amazing+day!&from=The+Office'
 
 // How many scraps of confetti to scatter. Old/weak devices (flagged html.legacy
 // by the inline gate in index.html) get a lighter field, since the CSS also drops

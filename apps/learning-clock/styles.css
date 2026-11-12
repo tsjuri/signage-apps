@@ -58,3 +58,7 @@ body { font-family: Poppins, system-ui, sans-serif; color: var(--ink); }
 .tag--hour rect { fill: var(--hour); } .tag--min rect { fill: var(--min); }
 .tag text { font: 800 6.2px Poppins, sans-serif; fill: var(--faceink); text-anchor: middle; dominant-baseline: central; letter-spacing: 0.06em; }
 .tag--hour text { fill: #fff; }
+
+/* hidden until the script has drawn the real time */
+.stage { transition: opacity 0.4s ease; }
+html:not([data-state]) .stage { opacity: 0; }

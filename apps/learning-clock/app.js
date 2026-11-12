@@ -124,6 +124,7 @@
     document.getElementById('words').textContent = w[0].toUpperCase() + w.slice(1)
     document.getElementById('how-hour').innerHTML = explainHour(h12, mm)
     document.getElementById('how-min').innerHTML = explainMin(mm)
+    document.documentElement.dataset.state = 'ready'
   }
   function tick() {
     draw()

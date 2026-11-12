@@ -193,3 +193,8 @@
    is the one-off .timer entrance, which the kill-switch already disables, so there's
    no animated resting state to hold, so this app needs no extra html.legacy rule.
    ========================================================================= */
+
+/* signage-apps: nothing shows until the script has filled in the real content
+   (it sets data-state), so the placeholder text in the HTML never flashes. */
+.stage { transition: opacity 0.5s ease; }
+html:not([data-state]) .stage { opacity: 0; }

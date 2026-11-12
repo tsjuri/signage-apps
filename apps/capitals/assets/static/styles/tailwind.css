@@ -306,3 +306,8 @@
    (data-state -> grid-template-rows), so it still reveals when the transition is
    dropped; it just snaps instead of growing.
    ========================================================================= */
+
+/* signage-apps: nothing shows until the script has filled in the real content
+   (it sets data-state), so the placeholder text in the HTML never flashes. */
+.stage { transition: opacity 0.5s ease; }
+html:not([data-state]) .stage { opacity: 0; }
