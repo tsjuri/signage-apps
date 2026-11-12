@@ -39,7 +39,7 @@
 const CALENDAR_ID = 'PASTE-THE-MENU-CALENDAR-ID-HERE@group.calendar.google.com'
 
 // Who may use the upload page: anyone signed in with an account in this domain…
-const UPLOAD_DOMAIN = 'onteoraschools.org'
+const UPLOAD_DOMAIN = 'onteora.k12.ny.us'
 // …or, if you list addresses here, only those people, e.g. ['jsmith@onteoraschools.org'].
 const UPLOADERS = []
 
@@ -109,7 +109,8 @@ function allowed() {
 
 function uploadPage() {
   const who = allowed()
-  const html = who ? UPLOAD_HTML.replace('__WHO__', who) : NO_ACCESS_HTML
+  const seen = Session.getActiveUser().getEmail() || 'no account (not signed in, or opened through the screens link)'
+  const html = who ? UPLOAD_HTML.replace('__WHO__', who) : NO_ACCESS_HTML.replace('__SEEN__', seen.replace(/[<>&]/g, ''))
   return HtmlService.createHtmlOutput(html)
     .setTitle('School Menu upload')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
@@ -306,7 +307,8 @@ function json(obj) { return ContentService.createTextOutput(JSON.stringify(obj))
 
 const NO_ACCESS_HTML = '<!doctype html><html><body style="font:16px/1.5 system-ui,sans-serif;max-width:34rem;margin:3rem auto;padding:0 1rem;color:#1d2558">' +
   '<h1 style="font-size:1.4rem">School Menu</h1><p>This page is for the people who keep the school menu. ' +
-  'Open it while signed in with your district Google account, using the upload link you were given.</p></body></html>'
+  'Open it while signed in with your district Google account, using the upload link you were given.</p>' +
+  '<p style="color:#666;font-size:.9rem">This page sees: __SEEN__</p></body></html>'
 
 const UPLOAD_HTML = `<!doctype html>
 <html><head><base target="_top">
