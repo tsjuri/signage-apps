@@ -30,8 +30,9 @@ see `school-items-template.csv`), observances-sheet (shown as "Observances": her
 one animated slide each, shown automatically when current; each school ticks, rewords and adds
 to them in its Google Sheet; template in `apps/observances-sheet/`; the slides themselves are in
 `shared/observances/data.js`, shared with trivia-facts and on-this-day), learning-clock (an analog clock that teaches kids to read it: coloured hands, minute ring,
-"past"/"to" halves, the time in words and how to read each hand), on-this-day (the school's own history from the On This Day tab of
-its sheet: today's entries, else one from this week, else another; nothing from the internet), lunch-menu (five rolling school days from a Google Calendar, banner images
+"past"/"to" halves, the time in words and how to read each hand), on-this-day (138 built-in school-friendly facts in `apps/on-this-day/facts.js`, plus the school's
+own history from the On This Day tab of its sheet, which comes first: today's entries, else one
+from this week, else another; nothing from the internet), lunch-menu (five rolling school days from a Google Calendar, banner images
 picked from `media/`; see `apps/lunch-menu/apps-script/` for a private calendar).
 
 **Adapted from Screenly-Labs:** birthday, capitals, clock, moon, quotes, timer, word, world-clock.

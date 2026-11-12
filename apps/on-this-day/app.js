@@ -7,6 +7,7 @@
  *
  * URL settings:
  *   sheet     the On This Day tab: Show, Date (Sep 5 / 9/5), Year, What happened
+ *   ours=1    only the school's own entries, not the built-in facts (facts.js)
  *   motion    gentle (default) | full | none
  *   date      YYYY-MM-DD: show the slides for another day (testing)
  */
@@ -34,7 +35,9 @@
   var MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
   var SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   var LONG = MONTHS.map(function (m) { return m[0].toUpperCase() + m.slice(1) })
-  var PALETTES = ['earth', 'plum', 'ocean', 'teal', 'navy', 'forest', 'violet', 'amber']
+  var OURS = /^(1|true|yes)$/i.test(get('ours'))
+  var TOPICS = window.OTD_TOPICS
+  var BUILTIN = window.OTD_FACTS.map(function (f) { return { m: f[0] - 1, d: f[1], y: f[2], topic: f[3], text: f[4], own: false } })
 
   function today() {
     var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(get('date'))
@@ -104,7 +107,7 @@
       if (!text || !day) return
       var y = parseInt(cell(cYear), 10) || day.y
       if (y >= thisYear) y = 0 // a date Sheets filled in with the current year is not the year it happened
-      out.push({ m: day.m, d: day.d, y: y, text: text })
+      out.push({ m: day.m, d: day.d, y: y, text: text, topic: 'ours', own: true })
     })
     return out
   }
@@ -141,18 +144,20 @@
     })
     return best
   }
+  // The school's own entries always come first.
   function sequence() {
-    var all = SHEET || []
+    var own = SHEET || []
+    var all = own.concat(OURS && own.length ? [] : BUILTIN)
     if (!all.length) return []
-    var on = all.filter(function (e) { return offset(e) === 0 }).map(function (e) { return { e: e, kind: 'today' } })
+    var first = function (a, b) { return (b.own - a.own) || (Math.abs(offset(a)) - Math.abs(offset(b))) }
+    var on = all.filter(function (e) { return offset(e) === 0 }).sort(first).map(function (e) { return { e: e, kind: 'today' } })
     if (on.length) return on
-    var week = all.filter(function (e) { return Math.abs(offset(e)) <= 3 })
-      .sort(function (a, b) { return offset(a) - offset(b) })
+    var week = all.filter(function (e) { return Math.abs(offset(e)) <= 3 }).sort(first)
       .map(function (e) { return { e: e, kind: 'week' } })
     if (week.length) return week
     var r = rng(dayNumber()), list = all.slice()
     for (var i = list.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var x = list[i]; list[i] = list[j]; list[j] = x }
-    return list.map(function (e) { return { e: e, kind: 'other' } })
+    return list.sort(function (a, b) { return b.own - a.own }).map(function (e) { return { e: e, kind: 'other' } })
   }
 
   // ---------- drawing ----------
@@ -169,7 +174,8 @@
   }
   function buildSlide(item, seed) {
     var e = item.e
-    var p = window.PALETTES[PALETTES[(e.m * 31 + e.d) % PALETTES.length]] || window.PALETTES.navy
+    var topic = TOPICS[e.topic] || TOPICS.ours
+    var p = window.PALETTES[topic.palette] || window.PALETTES.navy
     var slide = el('section', 'slide')
     slide.style.setProperty('--bg1', p[0])
     slide.style.setProperty('--bg2', p[1])
@@ -195,8 +201,8 @@
 
     var when = SHORT[e.m] + ' ' + e.d
     var eyebrow = item.kind === 'today' ? (e.y ? 'On this day in ' + e.y : 'On this day')
-      : item.kind === 'week' ? 'This week in our history'
-      : 'From our history'
+      : item.kind === 'week' ? (e.own ? 'This week in our history' : 'This week in history')
+      : (e.own ? 'From our history' : 'From history')
     var layout = el('div', 'layout')
     var text = el('div', 'text')
     text.appendChild(el('p', 'eyebrow', eyebrow))
@@ -212,7 +218,7 @@
     emblem.appendChild(el('div', 'emblem__disc'))
     emblem.appendChild(el('div', 'emblem__ring'))
     var icon = el('div', 'emblem__icon')
-    icon.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true">' + (window.ICONS.scroll || window.ICONS.star) + '</svg>'
+    icon.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true">' + (window.ICONS[topic.icon] || window.ICONS.star) + '</svg>'
     emblem.appendChild(icon)
     layout.appendChild(emblem)
 
@@ -222,14 +228,14 @@
     badge.appendChild(el('span', null, String(e.d)))
     foot.appendChild(badge)
     foot.appendChild(el('span', 'foot__when', e.y ? when + ', ' + e.y : when))
-    foot.appendChild(el('span', 'foot__kind', 'Our history'))
+    foot.appendChild(el('span', 'foot__kind', topic.label))
     layout.appendChild(foot)
 
     slide.appendChild(layout)
     return { slide: slide, title: title, text: text }
   }
   function emptySlide() {
-    return buildSlide({ kind: 'other', e: { m: today().getMonth(), d: today().getDate(), y: 0,
+    return buildSlide({ kind: 'other', e: { m: today().getMonth(), d: today().getDate(), y: 0, topic: 'ours', own: true,
       text: 'Add your school’s history to the On This Day tab of your sheet.' } }, 1)
   }
 

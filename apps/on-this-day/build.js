@@ -8,6 +8,8 @@ import { join } from 'node:path'
 const DIST = 'dist'
 const FILES = {
   'app.js': 'app.js',
+  'facts.js': 'facts.js',
+  'icons-extra.js': '../trivia-facts/icons-extra.js',
   'extra.css': '../trivia-facts/extra.css',
   'icons.js': '../../shared/observances/icons.js',
   'styles.css': '../../shared/observances/styles.css',
@@ -28,10 +30,10 @@ for (const w of [500, 600, 800]) {
 const manifest = {
   manifestVersion: '1',
   id: 'on-this-day',
-  name: 'On This Day (our history)',
+  name: 'On This Day',
   description:
-    'Moments from your own school’s history on the day they happened: “On this day in 1957, our school opened its doors.” Everything comes from your Google Sheet, nothing from the internet. On days without an entry it shows one from this week, or another from your history.',
-  summary: 'Your school’s own history, on the day it happened.',
+    'What happened on this day: space firsts, inventions, discoveries, and the birthdays of authors, artists and scientists, all school-friendly. Add your own school’s history from a Google Sheet (“On this day in 1957, our school opened its doors”); your entries always come first. On a day without an entry it shows one from this week.',
+  summary: 'School-friendly “on this day” facts, plus your own school’s history.',
   tags: ['School', 'Education'],
   playback: { pacing: 'fixed', refreshIntervalS: 3600 },
   settings: {
@@ -40,9 +42,15 @@ const manifest = {
     properties: {
       sheet: {
         type: 'string',
-        title: 'Our history (Google Sheet)',
-        description: 'The On This Day tab’s Publish to web link (CSV), with columns Show, Date (e.g. Sep 5), Year, What happened. Each time this asset comes up it shows one entry for the whole duration you set in Anthias.',
+        title: 'Our own history (Google Sheet)',
+        description: 'Optional. The On This Day tab’s Publish to web link (CSV), with columns Show, Date (e.g. Sep 5), Year, What happened. Each time this asset comes up it shows one entry for the whole duration you set in Anthias.',
         'x-widget': 'url'
+      },
+      ours: {
+        type: 'boolean',
+        title: 'Only our own history',
+        description: 'Leave off to mix your sheet with the built-in facts.',
+        default: false
       },
       motion: {
         type: 'string',
@@ -62,7 +70,7 @@ const manifest = {
   },
   launch: {
     baseUrl: 'https://example.invalid/on-this-day/',
-    template: '{?sheet,motion,date}'
+    template: '{?sheet,ours,motion,date}'
   }
 }
 writeFileSync(join(DIST, '.well-known/signage-app.json'), `${JSON.stringify(manifest, null, 2)}\n`)
