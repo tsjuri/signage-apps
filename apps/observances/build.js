@@ -41,6 +41,14 @@ const manifest = {
         minimum: 4,
         maximum: 120
       },
+      motion: {
+        type: 'string',
+        title: 'Motion',
+        description: 'Gentle suits small players like Intel Compute Sticks. Full adds drifting background shapes; None turns all movement off.',
+        default: 'gentle',
+        enum: ['gentle', 'full', 'none'],
+        'x-enumLabels': ['Gentle', 'Full', 'None']
+      },
       hideHeritage: toggle('Hide heritage months', 'e.g. Hispanic Heritage Month, Black History Month'),
       hideAwareness: toggle('Hide awareness & safety', 'e.g. Bullying Prevention, Fire Prevention Week'),
       hideSchool: toggle('Hide school weeks', 'e.g. Teacher Appreciation Week, School Library Month'),
@@ -76,7 +84,7 @@ const manifest = {
   },
   launch: {
     baseUrl: 'https://example.invalid/observances/',
-    template: '{?seconds,hideHeritage,hideAwareness,hideSchool,hideDays,hideHolidays,skip*,msg*,date}'
+    template: '{?seconds,motion,hideHeritage,hideAwareness,hideSchool,hideDays,hideHolidays,skip*,msg*,date}'
   }
 }
 writeFileSync(join(DIST, '.well-known/signage-app.json'), `${JSON.stringify(manifest, null, 2)}\n`)

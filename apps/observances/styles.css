@@ -18,7 +18,7 @@ body { font-family: 'Poppins', system-ui, sans-serif; overflow: hidden; cursor: 
   background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
   overflow: hidden;
   opacity: 0;
-  transition: opacity 0.9s ease;
+  transition: opacity 0.6s ease;
 }
 .slide.is-on { opacity: 1; }
 
@@ -28,9 +28,10 @@ body { font-family: 'Poppins', system-ui, sans-serif; overflow: hidden; cursor: 
   border-radius: 50%;
   background: var(--ink);
   opacity: 0.06;
-  will-change: transform;
-  animation: drift var(--t, 38s) ease-in-out infinite alternate;
 }
+/* Shapes only drift in Motion: full. On small players (Atom sticks) many large
+   moving layers can overwhelm the graphics driver, so gentle keeps them still. */
+.motion-full .shape { animation: drift var(--t, 38s) ease-in-out infinite alternate; }
 .shape--accent { background: var(--accent); opacity: 0.16; }
 .shape--ring { background: none; border: calc(var(--u) * 0.5) solid var(--accent); opacity: 0.22; }
 @keyframes drift {
@@ -214,6 +215,11 @@ body { font-family: 'Poppins', system-ui, sans-serif; overflow: hidden; cursor: 
 }
 .dots li.is-on { opacity: 0.9; transform: scale(1.35); }
 
+/* Motion: none — no movement at all, just a quick fade between slides. */
+.motion-none .emblem__ring, .motion-none .emblem__icon { animation: none; }
+.motion-none .slide { transition: none; }
+.motion-none .slide .eyebrow, .motion-none .slide .title, .motion-none .slide .message,
+.motion-none .slide .foot, .motion-none .slide .bar, .motion-none .slide .emblem { opacity: 1; transform: none; animation: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .shape, .emblem__ring, .emblem__icon { animation: none; }
 }

@@ -6,6 +6,7 @@
  *   skip=<name>     (repeatable) hide one observance; part of its name is enough
  *   msg=<name>|<text> (repeatable) replace the message on one observance's slide
  *   seconds         seconds per slide (default 12)
+ *   motion          gentle (default) | full | none
  *   date            YYYY-MM-DD: show as if it were that day (for testing)
  *   all=1           cycle through every slide (for previewing); only=<id> one slide
  */
@@ -16,6 +17,10 @@
   var get = function (k) { return (params.get(k) || '').trim() }
   var on = function (k) { var v = get(k).toLowerCase(); return v === '1' || v === 'true' || v === 'yes' }
 
+  // gentle (default): text eases in, emblem floats, shapes stay still.
+  // full: shapes drift too (heavier). none: no movement.
+  var MOTION = ({ full: 1, none: 1 })[get('motion')] ? get('motion') : 'gentle'
+  document.documentElement.className += ' motion-' + MOTION
   var SECONDS = Math.min(Math.max(parseFloat(get('seconds')) || 12, 4), 120)
   var LEAD_DAYS = 3 // single days and weeks appear this many days early
 
@@ -194,9 +199,10 @@
     slide.style.setProperty('--ink', p[3])
 
     var r = rng(o.id)
-    for (var i = 0; i < 7; i++) {
+    var SHAPES = MOTION === 'full' ? 5 : 4
+    for (var i = 0; i < SHAPES; i++) {
       var sh = el('div', 'shape' + (i % 3 === 0 ? ' shape--accent' : i % 3 === 1 ? '' : ' shape--ring'))
-      var size = 8 + r() * 26
+      var size = 7 + r() * 17
       sh.style.width = sh.style.height = size + 'vmax'
       sh.style.left = (r() * 110 - 10) + '%'
       sh.style.top = (r() * 110 - 10) + '%'
@@ -280,14 +286,13 @@
     var built = buildSlide(slides[index])
     stage.appendChild(built.slide)
     fitTitle(built)
-    // two frames so the browser paints the hidden state before fading in
-    requestAnimationFrame(function () { requestAnimationFrame(function () { built.slide.classList.add('is-on') }) })
+    setTimeout(function () { built.slide.classList.add('is-on') }, 40) // after the hidden state has painted
     var old = current
     current = built.slide
     currentBuilt = built
     if (old) {
       old.classList.remove('is-on')
-      setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old) }, 1200)
+      setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old) }, 700)
     }
     Array.prototype.forEach.call(dots.children, function (d, k) { d.classList.toggle('is-on', k === index) })
     dots.style.setProperty('--dot', (window.PALETTES[slides[index].o.palette] || window.PALETTES.navy)[3])
