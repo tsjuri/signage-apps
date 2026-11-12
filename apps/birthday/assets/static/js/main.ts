@@ -80,9 +80,34 @@ const render = (params: URLSearchParams): void => {
   document.documentElement.dataset.state = 'ready'
 }
 
-// The greeting, with one name at a time when there are several: every few
-// seconds the name scrolls up and the next one comes in from below.
-const NAME_SECONDS = 3.5
+// The greeting, with one name at a time when there are several: the name
+// scrolls up and the next one comes in from below. The asset's duration is
+// shared out so each name is shown once. A page can't ask the player for that
+// duration, so it's measured: how long this page was on screen last time (from
+// load until the player moved on). The very first showing uses 3.5 s a name.
+const LOADED_AT = Date.now()
+const DUR_KEY = 'birthday:duration'
+const rememberDuration = (): void => {
+  const s = (Date.now() - LOADED_AT) / 1000
+  if (s >= 3 && s <= 900) {
+    try {
+      localStorage.setItem(DUR_KEY, String(Math.round(s * 10) / 10))
+    } catch {}
+  }
+}
+window.addEventListener('pagehide', rememberDuration)
+window.addEventListener('beforeunload', rememberDuration)
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) rememberDuration()
+})
+const nameSeconds = (count: number): number => {
+  let measured = 0
+  try {
+    measured = Number(localStorage.getItem(DUR_KEY)) || 0
+  } catch {}
+  if (measured < 3) return 3.5
+  return Math.max(2, (measured - 0.5) / count) // never faster than 2 s a name
+}
 const showNames = (names: string[]): void => {
   const h = document.getElementById('greeting')
   if (!h) return
@@ -120,7 +145,7 @@ const showNames = (names: string[]): void => {
     window.setTimeout(() => next.classList.add('is-in'), 30)
     window.setTimeout(() => old.remove(), 900)
     current = next
-  }, NAME_SECONDS * 1000)
+  }, nameSeconds(names.length) * 1000)
 }
 
 const COLORS = ['#f6c453', '#ff6b9d', '#6ad3c9', '#ff8c66', '#c8a2ff', '#7fb4ff']
