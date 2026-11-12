@@ -305,3 +305,9 @@ body {
     animation-delay: 220ms;
   }
 }
+
+/* signage-apps: nothing but the stars shows until the script has drawn
+   today's Moon (main.ts sets data-state), so the page never flashes the
+   placeholder phase baked into the HTML. */
+.sky > :not(.stars) { transition: opacity 0.6s ease; }
+html:not([data-state='ready']) .sky > :not(.stars) { opacity: 0; }
