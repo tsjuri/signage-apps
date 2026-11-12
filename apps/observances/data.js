@@ -83,6 +83,8 @@ window.OBSERVANCES = [
   // ---- November ----
   { id: 'native-american-heritage', title: 'Native American Heritage Month', type: 'heritage', when: { month: 11 }, icon: 'sun', palette: 'amber',
     message: 'Honoring the rich histories, cultures, traditions and contributions of Native peoples.' },
+  { id: 'dia-de-los-muertos', title: 'Día de los Muertos', type: 'holiday', when: { range: [11, 1, 11, 2] }, icon: 'skull', palette: 'sunrise',
+    message: 'The Day of the Dead: families in Mexico and beyond lovingly remember those who came before them, with marigolds, candles, photos and favorite foods.' },
   { id: 'veterans-day', title: 'Veterans Day', type: 'day', when: { day: [11, 11] }, icon: 'star', palette: 'indigo',
     message: 'Thank you to all who have served our country, and to their families.' },
   { id: 'kindness-day', title: 'World Kindness Day', type: 'day', when: { day: [11, 13] }, icon: 'heart', palette: 'rose',
