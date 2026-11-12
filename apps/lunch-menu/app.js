@@ -20,6 +20,17 @@
   var get = function (k) { return (params.get(k) || '').trim() }
 
   var MEAL = get('meal') === 'breakfast' ? 'breakfast' : 'lunch'
+  // Season for the banner motifs: Sep–Nov fall, Dec–Feb winter, Mar–May spring,
+  // Jun–Aug summer. ?season=… overrides it (for previewing).
+  function setLook() {
+    var m = new Date().getMonth()
+    var season = ({ fall: 1, winter: 1, spring: 1, summer: 1 })[get('season')] ? get('season')
+      : m >= 8 && m <= 10 ? 'fall' : m === 11 || m <= 1 ? 'winter' : m <= 4 ? 'spring' : 'summer'
+    var b = document.querySelector('.board')
+    b.className = 'board meal-' + MEAL + ' season-' + season
+  }
+  setLook()
+  setInterval(setLook, 60 * 60 * 1000)
   var DAYS = Math.min(Math.max(parseInt(get('days'), 10) || 5, 1), 7)
   var REFRESH_MS = 15 * 60 * 1000
   var CACHE_KEY = 'lunch-menu:' + MEAL + ':' + (get('source') || get('calendarId') || 'demo')

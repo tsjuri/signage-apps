@@ -13,11 +13,13 @@ mkdirSync(join(DIST, 'fonts'), { recursive: true })
 mkdirSync(join(DIST, '.well-known'), { recursive: true })
 
 const v = createHash('sha256')
-for (const f of ['app.js', 'styles.css', 'index.html']) v.update(readFileSync(f))
+for (const f of ['app.js', 'styles.css', 'index.html', ...readdirSync('art').map((f) => join('art', f))]) v.update(readFileSync(f))
 const VERSION = v.digest('hex').slice(0, 10)
 
 copyFileSync('app.js', join(DIST, 'app.js'))
 copyFileSync('styles.css', join(DIST, 'styles.css'))
+mkdirSync(join(DIST, 'art'), { recursive: true })
+for (const f of readdirSync('art')) copyFileSync(join('art', f), join(DIST, 'art', f))
 writeFileSync(join(DIST, 'index.html'), readFileSync('index.html', 'utf8').replaceAll('__V__', VERSION))
 for (const w of [500, 600, 800]) {
   copyFileSync(`node_modules/@fontsource/poppins/files/poppins-latin-${w}-normal.woff2`, join(DIST, `fonts/poppins-${w}.woff2`))

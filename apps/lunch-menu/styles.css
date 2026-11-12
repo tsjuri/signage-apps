@@ -41,11 +41,7 @@ body {
   height: 100vh;
   display: grid;
   grid-template-rows: 30% auto 1fr;
-  /* faint food-doodle texture, drawn inline so nothing extra is fetched */
   background-color: var(--paper);
-  background-image: radial-gradient(circle at 20% 30%, rgba(182, 49, 91, 0.05) 0 2px, transparent 3px),
-    radial-gradient(circle at 70% 60%, rgba(29, 26, 31, 0.05) 0 2px, transparent 3px);
-  background-size: calc(var(--u) * 6) calc(var(--u) * 6), calc(var(--u) * 9) calc(var(--u) * 9);
 }
 
 /* ---- banner ---- */
@@ -56,6 +52,27 @@ body {
   align-items: center;
   overflow: hidden;
 }
+/* A seasonal landscape behind the plates (fall, winter, spring, summer), chosen
+   by app.js from the date, with a soft light patch behind the title. */
+.banner::before, .banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.banner::before {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center bottom;
+}
+.banner::after {
+  background: radial-gradient(ellipse 21% 58% at 50% 52%, rgba(247, 244, 241, 0.78), rgba(247, 244, 241, 0.45) 55%, rgba(247, 244, 241, 0) 100%);
+}
+.season-fall .banner::before { background-image: url('art/season-fall.svg'); }
+.season-winter .banner::before { background-image: url('art/season-winter.svg'); }
+.season-spring .banner::before { background-image: url('art/season-spring.svg'); }
+.season-summer .banner::before { background-image: url('art/season-summer.svg'); }
+.plates { z-index: 1; }
 .title { text-align: center; padding: 0 calc(var(--u) * 3); z-index: 2; }
 .title__eyebrow {
   margin: 0 0 calc(var(--u) * 0.4);
@@ -94,6 +111,9 @@ body {
 
 /* ---- days ---- */
 .days {
+  /* faint line drawings: vegetables for lunch, fruit for breakfast */
+  background: url('art/veg-pattern.svg') repeat;
+  background-size: calc(var(--u) * 24) auto;
   display: grid;
   grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr));
   grid-template-rows: auto 1fr;
@@ -137,3 +157,5 @@ body {
   font-size: calc(var(--u) * 1.2);
   color: var(--muted);
 }
+
+.meal-breakfast .days { background-image: url('art/fruit-pattern.svg'); }

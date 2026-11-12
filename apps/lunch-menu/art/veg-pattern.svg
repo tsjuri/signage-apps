@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+<g opacity=".24" fill="none" stroke="#b89aa1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- carrot -->
+  <g transform="translate(28 22) rotate(30)"><path d="M10 14 C22 12 28 16 26 24 L12 70 C11 74 7 74 7 70 L0 26 C-1 18 2 15 10 14Z"/><path d="M6 32 l8 -2 M5 46 l9 -2 M6 58 l6 -1"/><path d="M12 14 C10 4 4 0 0 0 M14 14 C16 2 22 -2 26 0 M13 14 C13 6 14 0 15 -4"/></g>
+  <!-- broccoli -->
+  <g transform="translate(118 20)"><path d="M26 44 L22 72 L38 72 L34 44"/><path d="M14 46 C2 46 0 30 10 26 C8 12 24 6 30 14 C36 4 54 8 52 22 C64 24 62 44 48 44 C42 50 20 50 14 46Z"/><path d="M22 30 c3 -3 7 -2 8 1 M36 26 c3 -2 7 0 7 3"/></g>
+  <!-- tomato -->
+  <g transform="translate(222 26)"><path d="M30 14 C52 12 62 30 56 48 C50 66 14 68 6 50 C-2 32 10 14 30 14Z"/><path d="M30 14 l-8 -8 M30 14 l8 -9 M30 14 l-12 2 M30 14 l12 1 M30 14 l0 -10"/></g>
+  <!-- pea pod -->
+  <g transform="translate(16 130) rotate(-18)"><path d="M0 20 C20 0 64 0 84 14 C66 34 20 36 0 20Z"/><circle cx="22" cy="18" r="6"/><circle cx="38" cy="17" r="6"/><circle cx="54" cy="17" r="6"/><path d="M84 14 c6 -2 10 -8 8 -14"/></g>
+  <!-- mushroom -->
+  <g transform="translate(132 120)"><path d="M0 30 C2 6 54 0 60 28 C44 34 16 34 0 30Z"/><path d="M22 32 L20 60 C26 64 34 64 40 60 L38 32"/><circle cx="18" cy="18" r="3"/><circle cx="38" cy="14" r="3"/></g>
+  <!-- corn -->
+  <g transform="translate(236 112) rotate(20)"><path d="M18 0 C34 4 36 48 22 74 C8 48 4 6 18 0Z"/><path d="M12 18 h16 M10 32 h22 M10 46 h22 M13 60 h16 M20 4 v66"/><path d="M8 40 C-8 52 -4 74 18 82 M30 40 C46 54 40 76 20 82"/></g>
+  <!-- bell pepper -->
+  <g transform="translate(20 222)"><path d="M14 16 C0 18 -2 46 8 60 C14 68 22 62 26 66 C30 70 42 70 48 60 C58 44 52 18 40 16 C34 14 30 20 26 18 C22 14 18 14 14 16Z"/><path d="M26 18 C26 10 30 4 36 4"/></g>
+  <!-- eggplant -->
+  <g transform="translate(120 220) rotate(-25)"><path d="M14 10 C30 8 34 30 44 46 C56 66 40 82 24 74 C6 66 0 44 2 28 C3 16 6 11 14 10Z"/><path d="M6 12 C10 4 18 2 24 8 C20 14 10 16 6 12Z"/><path d="M14 6 L12 -4"/></g>
+  <!-- radish -->
+  <g transform="translate(222 222)"><path d="M28 22 C46 22 52 40 44 52 C38 62 32 64 28 76 C24 64 16 62 12 52 C4 40 10 22 28 22Z"/><path d="M28 22 C22 10 12 6 8 8 M28 22 C34 8 46 4 50 8 M28 22 L28 4"/></g>
+  <!-- small fillers -->
+  <circle cx="100" cy="100" r="4"/><circle cx="210" cy="96" r="3"/><circle cx="96" cy="206" r="3.5"/><circle cx="206" cy="202" r="4"/>
+  <path d="M100 290 c4 -6 10 -6 14 0" /><path d="M286 96 c-4 6 -4 12 2 16"/>
+</g>
+</svg>
