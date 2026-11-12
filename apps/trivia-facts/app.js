@@ -3,7 +3,9 @@
  *
  * URL settings:
  *   mode      both (default) | trivia | facts
- *   seconds   seconds per slide (default 14); a quiz reveals its answer at ~60%
+ *   seconds   roughly how long each slide should last (default 14); the app fits
+ *             whole slides into the asset's measured duration. A quiz reveals
+ *             its answer halfway. fixed=1 uses the seconds exactly instead.
  *   motion    gentle (default) | full | none
  *   sheet     optional published Google Sheet (CSV) with the school's own items
  *   ours=1    show only the sheet's items, not the built-in set
@@ -19,8 +21,32 @@
   var MODE = ({ trivia: 1, facts: 1 })[get('mode')] ? get('mode') : 'both'
   var MOTION = ({ full: 1, none: 1 })[get('motion')] ? get('motion') : 'gentle'
   document.documentElement.className += ' motion-' + MOTION
-  var SECONDS = Math.min(Math.max(parseFloat(get('seconds')) || 14, 6), 120)
-  var REVEAL_AT = 0.6
+  var WANTED = Math.min(Math.max(parseFloat(get('seconds')) || 14, 6), 120)
+  var REVEAL_AT = 0.5 // quiz: half question, half answer
+
+  // Fit the slides to the asset's duration in Anthias. A page can't ask the
+  // player for it, so the app measures how long it was on screen last time
+  // (from load until the player moved on) and fits whole slides into that:
+  // one item per 24 s, two per 30 s with a 14 s setting, and so on.
+  // Turn it off with fixed=1; the first showing uses the setting as is.
+  var LOADED_AT = Date.now()
+  var DUR_KEY = 'trivia-facts:duration'
+  function rememberDuration() {
+    var s = (Date.now() - LOADED_AT) / 1000
+    if (s >= 5 && s <= 900) { try { localStorage.setItem(DUR_KEY, String(Math.round(s))) } catch (e) {} }
+  }
+  window.addEventListener('pagehide', rememberDuration)
+  window.addEventListener('beforeunload', rememberDuration)
+  document.addEventListener('visibilitychange', function () { if (document.hidden) rememberDuration() })
+  var SECONDS = WANTED
+  if (!on('fixed')) {
+    var measured = 0
+    try { measured = parseFloat(localStorage.getItem(DUR_KEY)) || 0 } catch (e) {}
+    if (measured >= 5) {
+      var fit = Math.max(1, Math.floor(measured / WANTED)) // never shorter than asked
+      SECONDS = (measured - 0.8) / fit // a little margin so the last slide isn't cut
+    }
+  }
 
   // ---------- items ----------
   var TOPICS = window.TOPICS

@@ -49,8 +49,8 @@ const manifest = {
       },
       seconds: {
         type: 'integer',
-        title: 'Seconds per slide',
-        description: 'A quiz question shows its answer about 60% of the way through.',
+        title: 'About how many seconds per slide',
+        description: 'The app measures this asset’s duration and fits whole slides into it, so nothing gets cut off: a 24 s duration shows one item, 30 s shows two. A quiz shows its answer halfway.',
         default: 14,
         minimum: 6,
         maximum: 120
