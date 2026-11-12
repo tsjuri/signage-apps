@@ -20,10 +20,7 @@ const App = ({ lat, lng, city = '', country = '', timezone = '', v }: AppProps) 
         <div class='stars' aria-hidden='true' />
 
         <header class='masthead'>
-          <p class='masthead__place'>
-            <span class='masthead__pin' aria-hidden='true' />
-            <span id='place'>Tonight’s sky</span>
-          </p>
+          {/* signage-apps fork: no place label; every screen is in one area */}
           <p class='masthead__date' id='today'>
             Today
           </p>
