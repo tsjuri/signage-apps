@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto'
 import { join } from 'node:path'
 
 const DIST = 'dist'
-const SHARED = '../observances'
+const SHARED = '../../shared/observances'
 const FILES = { 'app.js': 'app.js', 'data.js': `${SHARED}/data.js`, 'icons.js': `${SHARED}/icons.js`, 'styles.css': `${SHARED}/styles.css` }
 rmSync(DIST, { recursive: true, force: true })
 mkdirSync(join(DIST, 'fonts'), { recursive: true })
@@ -26,7 +26,7 @@ for (const w of [500, 600, 800]) {
 const manifest = {
   manifestVersion: '1',
   id: 'observances-sheet',
-  name: 'Observances (Google Sheet)',
+  name: 'Observances',
   description:
     'Heritage months, awareness months, school weeks and special days, one animated slide each, shown automatically when current. Each school controls its own slides from a Google Sheet: tick or untick observances, rewrite the messages and add its own events. Changes reach the screen within the hour.',
   summary: 'Observance slides, chosen and worded in the school’s own Google Sheet.',

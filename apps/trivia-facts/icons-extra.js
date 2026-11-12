@@ -1,4 +1,4 @@
-/* Emblems this app adds to the shared set from apps/observances/icons.js. */
+/* Emblems this app adds to the shared set from shared/observances/icons.js. */
 ;(function () {
   var I = window.ICONS || (window.ICONS = {})
   I.paw = '<ellipse class="f" cx="50" cy="66" rx="20" ry="17"/><ellipse class="f" cx="24" cy="44" rx="8" ry="11" transform="rotate(-20 24 44)"/><ellipse class="f" cx="40" cy="26" rx="8" ry="11" transform="rotate(-6 40 26)"/><ellipse class="f" cx="60" cy="26" rx="8" ry="11" transform="rotate(6 60 26)"/><ellipse class="f" cx="76" cy="44" rx="8" ry="11" transform="rotate(20 76 44)"/>'

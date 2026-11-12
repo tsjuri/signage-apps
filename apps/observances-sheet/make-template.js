@@ -4,7 +4,7 @@
 const fs = require('fs')
 const vm = require('vm')
 const ctx = { window: {} }
-vm.runInNewContext(fs.readFileSync(__dirname + '/../observances/data.js', 'utf8'), ctx)
+vm.runInNewContext(fs.readFileSync(__dirname + '/../../shared/observances/data.js', 'utf8'), ctx)
 const { OBSERVANCES } = ctx.window
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']

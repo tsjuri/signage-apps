@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import { join } from 'node:path'
 
 const DIST = 'dist'
-const SHARED = '../observances'
+const SHARED = '../../shared/observances'
 const FILES = {
   'app.js': 'app.js',
   'data.js': 'data.js',

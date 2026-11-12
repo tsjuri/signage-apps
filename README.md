@@ -26,21 +26,22 @@ affiliated with or endorsed by Screenly.
 
 **Our own:** trivia-facts (a quick quiz with an answer reveal, alternating with fun facts;
 built-in set in `apps/trivia-facts/data.js`, schools can add their own from a Google Sheet,
-see `school-items-template.csv`), observances-sheet (Observances driven by each school's
-Google Sheet; template in `apps/observances-sheet/`), learning-clock (an analog clock that teaches kids to read it: coloured hands, minute ring,
+see `school-items-template.csv`), observances-sheet (shown as "Observances": heritage/awareness months, school weeks and days,
+one animated slide each, shown automatically when current; each school ticks, rewords and adds
+to them in its Google Sheet; template in `apps/observances-sheet/`; the slides themselves are in
+`shared/observances/data.js`, shared with trivia-facts and on-this-day), learning-clock (an analog clock that teaches kids to read it: coloured hands, minute ring,
 "past"/"to" halves, the time in words and how to read each hand), on-this-day (the school's own history from the On This Day tab of
-its sheet: today's entries, else one from this week, else another; nothing from the internet), observances (heritage/awareness months, school weeks and days, one animated
-slide each, shown automatically when current; edit `apps/observances/data.js` to add or change
-one), lunch-menu (five rolling school days from a Google Calendar, banner images
+its sheet: today's entries, else one from this week, else another; nothing from the internet), lunch-menu (five rolling school days from a Google Calendar, banner images
 picked from `media/`; see `apps/lunch-menu/apps-script/` for a private calendar).
 
-**Adapted from Screenly-Labs:** birthday, capitals, clock, moon, quotes, team-milestone, timer, word, world-clock.
+**Adapted from Screenly-Labs:** birthday, capitals, clock, moon, quotes, timer, word, world-clock.
 Quotes uses a school-filtered set (`apps/quotes/docs/SCHOOL.md`) and, like trivia-facts, can add
 the school's own quotes from a Google Sheet tab (columns Show, Quote, Author), or show only those.
 
 Not included (they need a server, an API key or a scheduled scraper): air quality, weather,
-RSS, Product Hunt, Silver Alert. Removed as unsuitable for schools: On This Day (live,
-unfiltered Wikipedia events, including disasters), Missing Children, Menu Board, Opening Hours.
+RSS, Product Hunt, Silver Alert. Removed as unsuitable for schools: the original On This Day (live,
+unfiltered Wikipedia events, including disasters), Missing Children, Menu Board, Opening Hours. Also removed: Team Milestone (not needed), and the
+original Observances app (replaced by the sheet version; its old URL redirects there).
 
 ## Publishing
 

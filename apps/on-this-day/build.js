@@ -9,9 +9,9 @@ const DIST = 'dist'
 const FILES = {
   'app.js': 'app.js',
   'extra.css': '../trivia-facts/extra.css',
-  'icons.js': '../observances/icons.js',
-  'styles.css': '../observances/styles.css',
-  'palettes.js': '../observances/data.js' // defines window.PALETTES (and the observances, unused here)
+  'icons.js': '../../shared/observances/icons.js',
+  'styles.css': '../../shared/observances/styles.css',
+  'palettes.js': '../../shared/observances/data.js' // defines window.PALETTES (and the observances, unused here)
 }
 rmSync(DIST, { recursive: true, force: true })
 mkdirSync(join(DIST, 'fonts'), { recursive: true })

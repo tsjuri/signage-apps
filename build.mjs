@@ -141,6 +141,13 @@ writeFileSync(
   `${JSON.stringify({ apps: index, indexVersion: '1', updated: new Date().toISOString() }, null, 2)}\n`
 )
 writeFileSync(join(SITE, '.nojekyll'), '')
+// The original Observances app was replaced by observances-sheet (same slides, plus the
+// school's Google Sheet). Players that still have the old URL are sent on, settings kept.
+mkdirSync(join(SITE, 'observances'), { recursive: true })
+writeFileSync(
+  join(SITE, 'observances', 'index.html'),
+  `<!doctype html><meta charset="utf-8"><script>location.replace('../observances-sheet/' + location.search)</script>`
+)
 // Shared images (banner photos etc.), served at <site>/media/<file>.
 if (existsSync(join(ROOT, 'media'))) cpSync(join(ROOT, 'media'), join(SITE, 'media'), { recursive: true })
 writeFileSync(
