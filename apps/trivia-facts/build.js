@@ -43,17 +43,10 @@ const manifest = {
       mode: {
         type: 'string',
         title: 'Show',
+        description: 'Each time this asset comes up in the playlist it shows one item for the whole duration you set in Anthias; a quiz shows its answer halfway. The next time round, it shows the next item.',
         default: 'both',
         enum: ['both', 'trivia', 'facts'],
         'x-enumLabels': ['Quiz and facts, alternating', 'Quiz only', 'Facts only']
-      },
-      seconds: {
-        type: 'integer',
-        title: 'About how many seconds per slide',
-        description: 'The app measures this asset’s duration and fits whole slides into it, so nothing gets cut off: a 24 s duration shows one item, 30 s shows two. A quiz shows its answer halfway.',
-        default: 14,
-        minimum: 6,
-        maximum: 120
       },
       motion: {
         type: 'string',
@@ -79,7 +72,7 @@ const manifest = {
   },
   launch: {
     baseUrl: 'https://example.invalid/trivia-facts/',
-    template: '{?mode,seconds,motion,sheet,ours}'
+    template: '{?mode,motion,sheet,ours}'
   }
 }
 writeFileSync(join(DIST, '.well-known/signage-app.json'), `${JSON.stringify(manifest, null, 2)}\n`)

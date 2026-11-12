@@ -3,9 +3,9 @@
  *
  * URL settings:
  *   mode      both (default) | trivia | facts
- *   seconds   roughly how long each slide should last (default 14); the app fits
- *             whole slides into the asset's measured duration. A quiz reveals
- *             its answer halfway. fixed=1 uses the seconds exactly instead.
+ *   (timing)  each showing in the playlist is one item that stays up until the
+ *             player moves on; set the pace with the asset's duration in Anthias.
+ *             A quiz reveals its answer halfway through the measured duration.
  *   motion    gentle (default) | full | none
  *   sheet     optional published Google Sheet (CSV) with the school's own items
  *   ours=1    show only the sheet's items, not the built-in set
@@ -21,14 +21,14 @@
   var MODE = ({ trivia: 1, facts: 1 })[get('mode')] ? get('mode') : 'both'
   var MOTION = ({ full: 1, none: 1 })[get('motion')] ? get('motion') : 'gentle'
   document.documentElement.className += ' motion-' + MOTION
-  var WANTED = Math.min(Math.max(parseFloat(get('seconds')) || 14, 6), 120)
   var REVEAL_AT = 0.5 // quiz: half question, half answer
 
-  // Fit the slides to the asset's duration in Anthias. A page can't ask the
-  // player for it, so the app measures how long it was on screen last time
-  // (from load until the player moved on) and fits whole slides into that:
-  // one item per 24 s, two per 30 s with a 14 s setting, and so on.
-  // Turn it off with fixed=1; the first showing uses the setting as is.
+  // One item per showing. A page can't ask the player how long it will be on
+  // screen, so the app measures how long it was up last time (from load until
+  // the player moved on) and reveals a quiz answer halfway through that. The
+  // item never changes by itself while the player shows it, so nothing flashes
+  // at the end; only if the page stays up for twice the measured time (a
+  // playlist where this is the only asset) does it move on to the next item.
   var LOADED_AT = Date.now()
   var DUR_KEY = 'trivia-facts:duration'
   function rememberDuration() {
@@ -38,15 +38,8 @@
   window.addEventListener('pagehide', rememberDuration)
   window.addEventListener('beforeunload', rememberDuration)
   document.addEventListener('visibilitychange', function () { if (document.hidden) rememberDuration() })
-  var SECONDS = WANTED
-  if (!on('fixed')) {
-    var measured = 0
-    try { measured = parseFloat(localStorage.getItem(DUR_KEY)) || 0 } catch (e) {}
-    if (measured >= 5) {
-      var fit = Math.max(1, Math.floor(measured / WANTED)) // never shorter than asked
-      SECONDS = (measured - 0.8) / fit // a little margin so the last slide isn't cut
-    }
-  }
+  var DURATION = 12 // until the first showing has been measured
+  try { var measured = parseFloat(localStorage.getItem(DUR_KEY)) || 0; if (measured >= 5) DURATION = measured } catch (e) {}
 
   // ---------- items ----------
   var TOPICS = window.TOPICS
@@ -265,7 +258,8 @@
   var POS = function () { return 'trivia-facts:pos:' + dayNumber() + ':' + MODE }
   window.addEventListener('resize', function () { if (currentBuilt) fitTitle(currentBuilt) })
 
-  function show(i) {
+  function show(i, first) {
+    var isFirst = !!first
     if (!items.length) return
     index = ((i % items.length) + items.length) % items.length
     var built = buildSlide(items[index], dayNumber() * 131 + index)
@@ -273,7 +267,9 @@
     fitTitle(built)
     setTimeout(function () { built.slide.classList.add('is-on') }, 40)
     clearTimeout(revealTimer)
-    if (built.answer) revealTimer = setTimeout(function () { built.slide.classList.add('is-revealed') }, SECONDS * 1000 * REVEAL_AT)
+    // halfway through the time on screen, counted from when the page loaded
+    var wait = built.answer ? (isFirst ? DURATION * REVEAL_AT * 1000 - (Date.now() - LOADED_AT) : DURATION * 2 * REVEAL_AT * 1000) : 0
+    if (built.answer) revealTimer = setTimeout(function () { built.slide.classList.add('is-revealed') }, Math.max(1500, wait))
     var old = current
     current = built.slide
     currentBuilt = built
@@ -297,9 +293,9 @@
     items = sequence()
     var resume = 0
     try { resume = parseInt(localStorage.getItem(POS()), 10) || 0 } catch (e) {}
-    show(resume) // next time round in the playlist, carry on with the next one
+    show(resume, true) // next time round in the playlist, carry on with the next one
     clearInterval(timer)
-    timer = setInterval(function () { show(index + 1) }, SECONDS * 1000)
+    timer = setInterval(function () { show(index + 1) }, DURATION * 2 * 1000) // only if never switched away
     var n = new Date()
     setTimeout(start, new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1, 0, 1) - n) // new order each day
   }
