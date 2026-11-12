@@ -23,7 +23,10 @@ affiliated with or endorsed by Screenly.
 
 ## Apps
 
-**Our own:** observances (heritage/awareness months, school weeks and days, one animated
+**Our own:** trivia-facts (a quick quiz with an answer reveal, alternating with fun facts;
+built-in set in `apps/trivia-facts/data.js`, schools can add their own from a Google Sheet,
+see `school-items-template.csv`), observances-sheet (Observances driven by each school's
+Google Sheet; template in `apps/observances-sheet/`), observances (heritage/awareness months, school weeks and days, one animated
 slide each, shown automatically when current; edit `apps/observances/data.js` to add or change
 one), lunch-menu (five rolling school days from a Google Calendar, banner images
 picked from `media/`; see `apps/lunch-menu/apps-script/` for a private calendar).
