@@ -2,12 +2,35 @@
   "manifestVersion": "1",
   "id": "quotes",
   "name": "Quotes",
-  "description": "A clean, full-screen quotation for any display. Each load shows one work-friendly quote, chosen at random, set in a large serif over a warm ink ground.",
+  "description": "A clean, full-screen quotation for any display. Each load shows one school-friendly quote, set in a large serif over a warm ink ground. Schools can add their own quotes from a Google Sheet.",
   "summary": "A fresh quote for any display.",
   "vendor": "Screenly",
-  "tags": ["Quotes"],
+  "tags": [
+    "Quotes"
+  ],
   "homepage": "https://quotes.srly.io/",
   "source": "https://github.com/Screenly-Labs/quotes",
   "support": "https://github.com/Screenly-Labs/quotes/issues",
-  "launch": { "baseUrl": "https://quotes.srly.io/" }
+  "launch": {
+    "baseUrl": "https://quotes.srly.io/",
+    "template": "{?sheet,ours}"
+  },
+  "settings": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "sheet": {
+        "type": "string",
+        "title": "Our own quotes (Google Sheet)",
+        "description": "Optional. The Quotes tab’s Publish to web link (CSV), with columns Show, Quote, Author. Mixed with the built-in set, one of yours is shown about half the time.",
+        "x-widget": "url"
+      },
+      "ours": {
+        "type": "boolean",
+        "title": "Only our own quotes",
+        "description": "Leave off to mix your sheet with the built-in set.",
+        "default": false
+      }
+    }
+  }
 }

@@ -38,12 +38,11 @@ describe('signage-app.json manifest', () => {
     }
   })
 
-  test('is a no-settings app: no launch template without settings', () => {
+  test('has a launch template only together with settings', () => {
     const hasTemplate = 'template' in manifest.launch
     const hasSettings = 'settings' in manifest
     // A template only makes sense when settings exist (schema allOf rule).
-    expect(hasTemplate).toBe(false)
-    expect(hasSettings).toBe(false)
+    expect(hasTemplate).toBe(hasSettings)
     // Single-shot app: the manifest and docs require playback to be omitted.
     expect('playback' in manifest).toBe(false)
   })

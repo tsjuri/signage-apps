@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import quotes from '../assets/static/data/quotes.json'
-import { isQuote, pickRandomIndex, type Quote } from '../assets/static/js/quotes'
+import { csvUrl, isQuote, pickRandomIndex, type Quote, readSheet } from '../assets/static/js/quotes'
 
 // Mirror the curation bounds in scripts/curate-quotes.ts so the shipped data
 // can't silently drift out of what the layout was designed and tested for.
@@ -49,8 +49,8 @@ describe('isQuote', () => {
 describe('quotes.json dataset', () => {
   const data = quotes as Quote[]
 
-  test('ships roughly 500 quotes', () => {
-    expect(data.length).toBeGreaterThanOrEqual(450)
+  test('ships the school-filtered set (see docs/SCHOOL.md)', () => {
+    expect(data.length).toBeGreaterThanOrEqual(100)
     expect(data.length).toBeLessThanOrEqual(520)
   })
 
@@ -70,5 +70,23 @@ describe('quotes.json dataset', () => {
   test('every quote can be selected', () => {
     expect(isQuote(data[pickRandomIndex(data.length, () => 0)])).toBe(true)
     expect(isQuote(data[pickRandomIndex(data.length, () => 0.999999)])).toBe(true)
+  })
+})
+
+describe('school sheet', () => {
+  test('reads ticked rows, keeps an empty author, skips unticked', () => {
+    const csv = 'Show,Quote,Author\r\nTRUE,"Be kind, always.",Mrs. Smith\r\nFALSE,Hidden,X\r\nTRUE,No author here,\r\n'
+    expect(readSheet(csv)).toEqual([
+      { text: 'Be kind, always.', author: 'Mrs. Smith' },
+      { text: 'No author here', author: '' }
+    ])
+  })
+  test('rejects a tab that is not a quotes tab', () => {
+    expect(readSheet('Show,Observance,When\nTRUE,X,Y')).toBeNull()
+  })
+  test('turns a pubhtml link into CSV', () => {
+    expect(csvUrl('https://docs.google.com/spreadsheets/d/e/ABC/pubhtml?gid=5&single=true')).toBe(
+      'https://docs.google.com/spreadsheets/d/e/ABC/pub?gid=5&single=true&output=csv'
+    )
   })
 })

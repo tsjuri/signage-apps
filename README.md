@@ -33,6 +33,8 @@ one), lunch-menu (five rolling school days from a Google Calendar, banner images
 picked from `media/`; see `apps/lunch-menu/apps-script/` for a private calendar).
 
 **Adapted from Screenly-Labs:** birthday, capitals, clock, moon, quotes, team-milestone, timer, word, world-clock.
+Quotes uses a school-filtered set (`apps/quotes/docs/SCHOOL.md`) and, like trivia-facts, can add
+the school's own quotes from a Google Sheet tab (columns Show, Quote, Author), or show only those.
 
 Not included (they need a server, an API key or a scheduled scraper): air quality, weather,
 RSS, Product Hunt, Silver Alert. Removed as unsuitable for schools: On This Day (live,
