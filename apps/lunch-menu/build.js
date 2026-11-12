@@ -47,15 +47,12 @@ const manifest = {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     type: 'object',
     properties: {
-      // First, and keeping its labels: Anthias names the new asset after it
-      // ("Lunch menu" / "Breakfast menu"), which tells the two assets apart.
       meal: {
         type: 'string',
         title: 'Meal',
         default: 'lunch',
         enum: ['lunch', 'breakfast'],
-        'x-enumLabels': ['Lunch menu', 'Breakfast menu'],
-        'x-asset-name': true
+        'x-enumLabels': ['Lunch', 'Breakfast']
       },
       source: {
         type: 'string',
