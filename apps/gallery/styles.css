@@ -1,0 +1,42 @@
+@font-face { font-family: Poppins; font-weight: 500; src: url(fonts/poppins-500.woff2) format('woff2'); }
+@font-face { font-family: Poppins; font-weight: 600; src: url(fonts/poppins-600.woff2) format('woff2'); }
+@font-face { font-family: Poppins; font-weight: 800; src: url(fonts/poppins-800.woff2) format('woff2'); }
+:root { --u: min(1vw, 1.7778vh); --bg1: #2c3f8f; --bg2: #1d2558; --ink: #fff8ec; --accent: #f6c945; --frame: #fffdf8; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg2); cursor: none; }
+body { font-family: Poppins, system-ui, sans-serif; color: var(--ink); }
+.stage { position: fixed; inset: 0; background: radial-gradient(ellipse at 50% 40%, var(--bg1), var(--bg2) 75%); }
+.stage { transition: opacity 0.5s ease; }
+html:not([data-state]) .stage { opacity: 0; }
+
+.head { position: absolute; left: 0; right: 0; top: calc(var(--u) * 2.2); text-align: center; z-index: 3; }
+.eyebrow { margin: 0; font-weight: 600; font-size: calc(var(--u) * 1.6); letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); }
+.eyebrow:empty { display: none; }
+.title { margin: calc(var(--u) * 0.3) 0 0; font-weight: 800; font-size: calc(var(--u) * 4.4); line-height: 1.05; letter-spacing: -0.01em; text-shadow: 0 calc(var(--u) * 0.3) calc(var(--u) * 1.2) rgba(0, 0, 0, 0.25); }
+
+/* the photo: a framed print, a little tilted, fading in over the last one */
+.photos { position: absolute; left: 15%; right: 15%; top: calc(var(--u) * 11.5); bottom: calc(var(--u) * 3.5); z-index: 2; }
+.shot { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 1.2s ease; }
+.shot.is-on { opacity: 1; }
+.print { position: relative; padding: calc(var(--u) * 1.1); background: var(--frame); border-radius: calc(var(--u) * 0.5);
+  box-shadow: 0 calc(var(--u) * 1) calc(var(--u) * 3) rgba(0, 0, 0, 0.35); transform: rotate(var(--tilt, 0deg)); max-width: 100%; max-height: 100%; display: flex; }
+.print__pic { overflow: hidden; border-radius: calc(var(--u) * 0.25); display: flex; }
+.print img { display: block; width: auto; height: auto; max-width: calc(70vw - var(--u) * 2.2); max-height: calc(100vh - var(--u) * 17.5); min-width: calc(var(--u) * 30); object-fit: contain; }
+.motion-gentle .shot.is-on img, .motion-full .shot.is-on img { animation: drift var(--secs, 8s) ease-out both; }
+@keyframes drift { from { transform: scale(1) translate(0, 0); } to { transform: scale(1.06) translate(var(--dx, 0), var(--dy, 0)); } }
+.motion-none .shot { transition: none; }
+
+/* decorations */
+.decor { position: absolute; inset: 0; pointer-events: none; }
+.decor--back { z-index: 1; }
+.decor--front { z-index: 4; }
+.decor svg { position: absolute; overflow: visible; }
+.motion-gentle .bob, .motion-full .bob { animation: bob var(--t, 5s) ease-in-out var(--d, 0s) infinite alternate; }
+.motion-gentle .sway, .motion-full .sway { animation: sway var(--t, 6s) ease-in-out var(--d, 0s) infinite alternate; }
+.motion-gentle .reach, .motion-full .reach { animation: reach var(--t, 7s) ease-in-out var(--d, 0s) infinite alternate; }
+@keyframes bob { from { transform: translateY(0) rotate(var(--r, 0deg)); } to { transform: translateY(calc(var(--u) * -1.4)) rotate(var(--r, 0deg)); } }
+@keyframes sway { from { transform: rotate(calc(var(--r, 0deg) - 5deg)); } to { transform: rotate(calc(var(--r, 0deg) + 5deg)); } }
+@keyframes reach { from { transform: translate(0, 0) rotate(var(--r, 0deg)); } to { transform: translate(var(--rx, 0), var(--ry, 0)) rotate(var(--r, 0deg)); } }
+.motion-none .decor svg { animation: none !important; transform: rotate(var(--r, 0deg)); }
+
+.status { position: absolute; right: calc(var(--u) * 2); bottom: calc(var(--u) * 1.2); margin: 0; font-size: calc(var(--u) * 1.3); opacity: 0.7; z-index: 5; }
