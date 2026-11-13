@@ -66,7 +66,9 @@ const setLine = (id: string, value: string): void => {
 const render = (params: URLSearchParams): void => {
   const config = parseConfig(params)
 
-  showNames(config.names)
+  // Calendar mode: the names come from the school's birthday feed (see below).
+  if (params.get('feed')) fromFeed(params)
+  else showNames(config.names)
   setLine('message', config.message)
   setLine('from', formatSignature(config.from))
 
@@ -78,6 +80,91 @@ const render = (params: URLSearchParams): void => {
   if (!STILL() && (all || CELEBRATION === 'balloons')) releaseBalloons(all)
   if (!STILL() && (all || CELEBRATION === 'fireworks')) startFireworks(all)
   document.documentElement.dataset.state = 'ready'
+}
+
+// ---------- calendar mode: the school's birthday feed (apps-script/Birthdays.gs) ----------
+// Like Rise's birthday calendar: one birthday at a time, with its date in a pill.
+// Today's come first, then the upcoming ones. On Fridays the weekend's birthdays
+// count as "this weekend".
+type Birthday = { date: string; name: string }
+const pad2 = (n: number): string => String(n).padStart(2, '0')
+const ymd = (d: Date): string => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`
+const ordinal = (n: number): string =>
+  `${n}${n % 100 >= 11 && n % 100 <= 13 ? 'th' : (['th', 'st', 'nd', 'rd'][n % 10] ?? 'th')}`
+
+const fromFeed = (params: URLSearchParams): void => {
+  const feed = params.get('feed') ?? ''
+  const unitDays = ({ days: 1, weeks: 7, months: 30 } as Record<string, number>)[params.get('unit') ?? 'weeks'] ?? 7
+  const rangeParam = params.get('range')
+  const n = rangeParam === null || rangeParam === '' ? 1 : Math.max(0, Number(rangeParam) || 0)
+  const range = Math.min(120, n * unitDays)
+  const show = params.get('show') ?? 'both'
+  const q = new URLSearchParams({
+    key: params.get('key') ?? '',
+    days: String(Math.max(range, 2)), // Fridays need the weekend
+    names: params.get('names') ?? 'first',
+  })
+  if (params.get('folder')) q.set('folder', params.get('folder') ?? '')
+  const CACHE = `birthday:feed:${feed}:${params.get('folder') ?? ''}`
+  fetch(`${feed}${feed.includes('?') ? '&' : '?'}${q}`, { cache: 'no-store' })
+    .then((r) => r.json())
+    .then((j: { birthdays?: Birthday[]; error?: string }) => {
+      if (j.error || !j.birthdays) throw new Error(j.error || 'no data')
+      try {
+        localStorage.setItem(CACHE, JSON.stringify(j.birthdays))
+      } catch {}
+      return j.birthdays
+    })
+    .catch(() => {
+      // offline: the last list this screen got
+      try {
+        return JSON.parse(localStorage.getItem(CACHE) || '[]') as Birthday[]
+      } catch {
+        return [] as Birthday[]
+      }
+    })
+    .then((list) => showFeed(list, show, range))
+}
+
+const showFeed = (list: Birthday[], show: string, range: number): void => {
+  const now = new Date()
+  const day = (k: number): string => ymd(new Date(now.getFullYear(), now.getMonth(), now.getDate() + k))
+  const today = day(0)
+  const weekend = now.getDay() === 5 ? new Set([day(1), day(2)]) : new Set<string>()
+  const last = day(range)
+  const entries = list
+    .filter((b) => b.date >= today && (b.date <= last || weekend.has(b.date)))
+    .filter((b) => (show === 'today' ? b.date === today || weekend.has(b.date) : true))
+    .filter((b) => (show === 'upcoming' ? b.date !== today : true))
+    .sort((x, y) => (x.date < y.date ? -1 : x.date > y.date ? 1 : 0))
+  const eyebrow = document.querySelector('.card__eyebrow')
+  const pill = document.getElementById('when')
+  if (!entries.length) {
+    if (eyebrow) eyebrow.textContent = show === 'today' ? 'Birthdays today' : 'Upcoming birthdays'
+    const h = document.getElementById('greeting')
+    if (h) h.textContent = show === 'today' ? 'No birthdays today' : 'No birthdays coming up'
+    if (pill) pill.hidden = true
+    return
+  }
+  const label = (b: Birthday): [string, string] => {
+    const [y, m, d] = b.date.split('-').map(Number)
+    const when = new Date(y, m - 1, d)
+    const long = `${when.toLocaleDateString('en-US', { month: 'long' })} ${ordinal(d)}`
+    if (b.date === today) return ['Today’s birthdays', 'Today']
+    if (weekend.has(b.date)) return ['This weekend', `${when.toLocaleDateString('en-US', { weekday: 'long' })}, ${long}`]
+    return ['Upcoming birthdays', long]
+  }
+  showNames(
+    entries.map((b) => b.name),
+    (i) => {
+      const [top, when] = label(entries[i])
+      if (eyebrow) eyebrow.textContent = top
+      if (pill) {
+        pill.textContent = when
+        pill.hidden = false
+      }
+    },
+  )
 }
 
 // The greeting, with one name at a time when there are several: the name
@@ -108,22 +195,26 @@ const nameSeconds = (count: number): number => {
   if (measured < 3) return 3.5
   return Math.max(2, (measured - 0.5) / count) // never faster than 2 s a name
 }
-const showNames = (names: string[]): void => {
+const showNames = (names: string[], onShow?: (i: number) => void): void => {
   const h = document.getElementById('greeting')
   if (!h) return
-  if (names.length < 2) {
+  onShow?.(0)
+  // Calendar mode: "Happy Birthday to" on its own line, the name in bold under it.
+  const calendar = onShow !== undefined
+  if (calendar) document.documentElement.classList.add('is-calendar')
+  if (names.length < 2 && !calendar) {
     h.textContent = formatGreeting(names[0] ?? '')
     return
   }
   const lead = document.createElement('span')
   lead.className = 'greeting__lead'
-  lead.textContent = 'Happy Birthday,'
+  lead.textContent = calendar ? 'Happy Birthday to' : 'Happy Birthday,'
   const box = document.createElement('span')
   box.className = 'names'
   const make = (n: string): HTMLSpanElement => {
     const el = document.createElement('span')
     el.className = 'names__one'
-    el.textContent = `${n}!`
+    el.textContent = calendar ? n : `${n}!`
     return el
   }
   // The box is as wide as the longest name, so the line doesn't jump about.
@@ -137,6 +228,7 @@ const showNames = (names: string[]): void => {
   // One after the other, never both at once: the name slides up and out, then
   // the next one slides up into its place.
   const OUT_MS = 450
+  if (names.length < 2) return
   window.setInterval(() => {
     i = (i + 1) % names.length
     const old = current
@@ -146,6 +238,7 @@ const showNames = (names: string[]): void => {
     current = next
     window.setTimeout(() => {
       old.remove()
+      onShow?.(i)
       box.appendChild(next)
       // next frame, so the browser sees the start position first
       window.setTimeout(() => next.classList.add('is-in'), 30)

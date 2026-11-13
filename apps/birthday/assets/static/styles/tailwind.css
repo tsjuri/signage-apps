@@ -316,3 +316,9 @@ html:not([data-state]) .stage { opacity: 0; }
 }
 @keyframes flash { from { transform: scale(0.3); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
 .motion-none .confetti__bit { animation: none; top: var(--top); transform: translateX(var(--drift)) rotate(var(--rotate)); }
+
+/* calendar mode: the birthday's date in a pill, like Rise's */
+.card__when { display: inline-block; margin: 1.4rem 0 0; padding: 0.35em 1.1em; border-radius: 999px; background: rgb(255 255 255 / 0.14); font-family: var(--font-sans); font-weight: 600; font-size: 1.35rem; letter-spacing: 0.02em; }
+.card__when[hidden] { display: none; }
+.is-calendar .greeting__lead { display: block; font-weight: 400; }
+.is-calendar .names__one { font-weight: 800; }

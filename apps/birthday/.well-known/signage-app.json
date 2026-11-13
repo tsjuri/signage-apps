@@ -22,9 +22,77 @@
     "properties": {
       "name": {
         "type": "string",
-        "title": "Names",
+        "title": "Names (without a birthday feed)",
         "description": "One or more names, separated by commas, e.g. Alex, Maria, Sam. With several, they take turns.",
         "x-widget": "text"
+      },
+      "feed": {
+        "type": "string",
+        "title": "Birthday feed URL",
+        "description": "Optional: the School Birthdays Apps Script URL (ends in /exec). With it, the app shows today’s and upcoming birthdays from the school’s private list, and the Names field is ignored.",
+        "x-widget": "url"
+      },
+      "key": {
+        "type": "string",
+        "title": "Secret key",
+        "description": "The KEY from the Birthdays script.",
+        "x-widget": "text"
+      },
+      "folder": {
+        "type": "string",
+        "title": "Folder",
+        "description": "Optional: the school’s subfolder in the Birthdays folder. Empty = the CSV directly in it.",
+        "x-widget": "text"
+      },
+      "range": {
+        "type": "integer",
+        "title": "Show upcoming birthdays for the next…",
+        "default": 1,
+        "minimum": 0,
+        "maximum": 120
+      },
+      "unit": {
+        "type": "string",
+        "title": "…days, weeks or months",
+        "default": "weeks",
+        "enum": [
+          "days",
+          "weeks",
+          "months"
+        ],
+        "x-enumLabels": [
+          "Days",
+          "Weeks",
+          "Months"
+        ]
+      },
+      "show": {
+        "type": "string",
+        "title": "Show",
+        "default": "both",
+        "enum": [
+          "both",
+          "today",
+          "upcoming"
+        ],
+        "x-enumLabels": [
+          "Today and upcoming",
+          "Today only",
+          "Upcoming only"
+        ]
+      },
+      "names": {
+        "type": "string",
+        "title": "Names as",
+        "default": "first",
+        "enum": [
+          "first",
+          "initial"
+        ],
+        "x-enumLabels": [
+          "First name (Maria)",
+          "First name and initial (Maria G.)"
+        ]
       },
       "message": {
         "type": "string",
@@ -77,6 +145,6 @@
   },
   "launch": {
     "baseUrl": "https://birthday.srly.io/",
-    "template": "{?name,message,from,celebration,motion}"
+    "template": "{?name,feed,key,folder,range,unit,show,names,message,from,celebration,motion}"
   }
 }
