@@ -84,6 +84,15 @@ script says so if Anthias's code has changed and it can't apply it. **Re-run it 
 
 Assets already added keep working either way: an installed app is stored as its full URL.
 
+## Offline
+
+Every app page registers one site-wide service worker (`shared/sw.js`, published as `sw.js`). It keeps a
+copy of every file an app loads from this site on the player and uses it when the site can't be reached
+within 6 seconds, so the screens keep running through an internet or GitHub outage with the last data
+the apps had (Menu, Gallery, Quotes and the sheet apps keep their own last copy of the Google data).
+Anthias also checks every web asset every 15 minutes and skips unreachable ones: turn on **Skip asset
+check** (asset → Edit → Advanced) for the apps that should keep showing offline.
+
 ## Banner images (`media/`)
 
 Upload photos to `media/` (github.com → Add file → Upload files) and push. They are published

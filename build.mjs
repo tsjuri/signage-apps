@@ -14,7 +14,7 @@
 //   REPO_URL     source link written into each manifest
 
 import { $ } from 'bun'
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const ORIGIN = (process.env.SITE_ORIGIN || 'https://tsjuri.github.io').replace(/\/$/, '')
@@ -66,7 +66,16 @@ function postProcess(id, out) {
     writeFileSync(f, s)
   }
   rmSync(join(out, 'static/images/screenly-logo.svg'), { force: true })
+  // Offline cache: every app page registers the site-wide service worker
+  // (shared/sw.js, published at the site root) and hands it its own files.
+  const page = join(out, 'index.html')
+  if (existsSync(page)) {
+    const html = readFileSync(page, 'utf8')
+    if (!html.includes('serviceWorker.register')) writeFileSync(page, html.replace('</body>', `${OFFLINE}</body>`))
+  }
 }
+const OFFLINE = `<script>(function(){if(!('serviceWorker' in navigator))return;navigator.serviceWorker.register('../sw.js',{scope:'../'}).then(function(){return navigator.serviceWorker.ready}).then(function(r){var urls=[location.href].concat(performance.getEntriesByType('resource').map(function(e){return e.name}));(r.active||navigator.serviceWorker.controller).postMessage({store:urls})}).catch(function(){})})()</script>`
+
 
 function writeManifest(id, src, out) {
   const m = JSON.parse(readFileSync(src, 'utf8'))
@@ -163,6 +172,7 @@ writeFileSync(
   `${JSON.stringify({ apps: index, indexVersion: '1', updated: new Date().toISOString() }, null, 2)}\n`
 )
 writeFileSync(join(SITE, '.nojekyll'), '')
+copyFileSync(join(ROOT, 'shared/sw.js'), join(SITE, 'sw.js'))
 // The original Observances app was replaced by observances-sheet (same slides, plus the
 // school's Google Sheet). Players that still have the old URL are sent on, settings kept.
 mkdirSync(join(SITE, 'observances'), { recursive: true })
