@@ -71,9 +71,17 @@ function postProcess(id, out) {
   const page = join(out, 'index.html')
   if (existsSync(page)) {
     const html = readFileSync(page, 'utf8')
-    if (!html.includes('serviceWorker.register')) writeFileSync(page, html.replace('</body>', `${OFFLINE}</body>`))
+    let out2 = html
+    if (!out2.includes('serviceWorker.register')) out2 = out2.replace('</body>', `${OFFLINE}</body>`)
+    if (BG_APPS.includes(id) && !out2.includes('signage-bg')) out2 = out2.replace('</body>', `${BG_SCRIPT}</body>`)
+    writeFileSync(page, out2)
   }
 }
+const BG_APPS = ['birthday', 'capitals', 'clock', 'world-clock', 'timer', 'moon', 'quotes', 'word', 'learning-clock', 'observances-sheet', 'on-this-day', 'trivia-facts']
+const BACKGROUNDS = existsSync(join(ROOT, 'media/backgrounds'))
+  ? readdirSync(join(ROOT, 'media/backgrounds')).filter((f) => /\.(jpe?g|png|webp|gif)$/i.test(f)).sort()
+  : []
+const BG_SCRIPT = `<script>${readFileSync(join(ROOT, 'shared/background.js'), 'utf8')}</script>`
 const OFFLINE = `<script>(function(){if(!('serviceWorker' in navigator))return;navigator.serviceWorker.register('../sw.js',{scope:'../'}).then(function(){return navigator.serviceWorker.ready}).then(function(r){var urls=[location.href].concat(performance.getEntriesByType('resource').map(function(e){return e.name}));(r.active||navigator.serviceWorker.controller).postMessage({store:urls})}).catch(function(){})})()</script>`
 
 
@@ -95,6 +103,22 @@ function writeManifest(id, src, out) {
           ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, scrub(x)]))
           : v
   const clean = scrub(m)
+  // Background photo option (shared/background.js) for most apps.
+  if (BG_APPS.includes(id)) {
+    clean.settings = clean.settings || { $schema: 'https://json-schema.org/draft/2020-12/schema', type: 'object', properties: {} }
+    clean.settings.properties = clean.settings.properties || {}
+    clean.settings.properties.background = {
+      type: 'string',
+      title: 'Background',
+      description: 'The app’s own, or a photo or GIF from the media/backgrounds folder.',
+      default: '',
+      enum: ['', ...BACKGROUNDS],
+      'x-enumLabels': ['The app’s own', ...BACKGROUNDS.map((f) => f.replace(/\.[a-z]+$/i, '').replace(/[-_]+/g, ' ').replace(/^./, (c) => c.toUpperCase()))]
+    }
+    clean.launch = clean.launch || {}
+    const t = clean.launch.template
+    clean.launch.template = t ? t.replace(/\}$/, ',background}') : '{?background}'
+  }
   // Anthias names a new asset after the label of the first dropdown with
   // x-enumLabels (meant for the RSS Reader's feed), so "On This Day" became
   // "Gentle". Use the labels themselves as the option values instead, so no

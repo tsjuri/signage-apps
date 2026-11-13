@@ -84,6 +84,15 @@ script says so if Anthias's code has changed and it can't apply it. **Re-run it 
 
 Assets already added keep working either way: an installed app is stored as its full URL.
 
+## Background photos
+
+Upload images (JPG, PNG, WebP or GIF) to `media/backgrounds/` on github.com. After the rebuild they
+appear in the **Background** dropdown of most apps (birthday, capitals, clock, world-clock, timer, moon,
+quotes, word, learning-clock, observances-sheet, on-this-day, trivia-facts, and countdown with its own
+version). `shared/background.js` makes the app's full-screen backdrop see-through, puts the image behind
+it, and adds a dark wash behind light text (a light one behind dark text). Use only images the school
+may use.
+
 ## Offline
 
 Every app page registers one site-wide service worker (`shared/sw.js`, published as `sw.js`). It keeps a
