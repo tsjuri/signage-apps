@@ -200,7 +200,10 @@ const nameSeconds = (count: number): number => {
     measured = Number(localStorage.getItem(DUR_KEY)) || 0
   } catch {}
   if (measured < 3) return 3.5
-  return Math.max(2, (measured - 0.5) / count) // never faster than 2 s a name
+  // The time that's left of the asset's slot (the feed takes a moment to load),
+  // shared out equally; never faster than 2 s a name.
+  const left = measured - (Date.now() - LOADED_AT) / 1000 - 0.5
+  return Math.max(2, left / count)
 }
 const showNames = (names: string[], onShow?: (i: number) => void): void => {
   const h = document.getElementById('greeting')
@@ -236,7 +239,9 @@ const showNames = (names: string[], onShow?: (i: number) => void): void => {
   // the next one slides up into its place.
   const OUT_MS = 450
   if (names.length < 2) return
-  window.setInterval(() => {
+  const secs = nameSeconds(names.length)
+  let shown = 1
+  const step = (): void => {
     i = (i + 1) % names.length
     const old = current
     old.classList.remove('is-in')
@@ -250,7 +255,16 @@ const showNames = (names: string[], onShow?: (i: number) => void): void => {
       // next frame, so the browser sees the start position first
       window.setTimeout(() => next.classList.add('is-in'), 30)
     }, OUT_MS)
-  }, nameSeconds(names.length) * 1000)
+  }
+  // Each name once, then the last one stays until the player moves on, so the
+  // first never flashes back at the end. (If the page stays up, it carries on.)
+  const timer = window.setInterval(() => {
+    step()
+    if (++shown >= names.length) {
+      window.clearInterval(timer)
+      window.setTimeout(() => window.setInterval(step, secs * 1000), secs * 2000)
+    }
+  }, secs * 1000)
 }
 
 const COLORS = ['#f6c453', '#ff6b9d', '#6ad3c9', '#ff8c66', '#c8a2ff', '#7fb4ff']
