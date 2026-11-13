@@ -79,7 +79,8 @@ const render = (params: URLSearchParams): void => {
   if (STILL() || all || CELEBRATION === 'confetti') scatterConfetti()
   if (!STILL() && (all || CELEBRATION === 'balloons')) releaseBalloons(all)
   if (!STILL() && (all || CELEBRATION === 'fireworks')) startFireworks(all)
-  document.documentElement.dataset.state = 'ready'
+  // With a feed, the card stays hidden until the real names are in (showFeed).
+  if (!params.get('feed')) document.documentElement.dataset.state = 'ready'
 }
 
 // ---------- calendar mode: the school's birthday feed (apps-script/Birthdays.gs) ----------
@@ -106,7 +107,10 @@ const fromFeed = (params: URLSearchParams): void => {
   })
   if (params.get('folder')) q.set('folder', params.get('folder') ?? '')
   const CACHE = `birthday:feed:${feed}:${params.get('folder') ?? ''}`
-  fetch(`${feed}${feed.includes('?') ? '&' : '?'}${q}`, { cache: 'no-store' })
+  // Don't wait forever: after 8 s, use the last list this screen got.
+  const ctl = new AbortController()
+  window.setTimeout(() => ctl.abort(), 8000)
+  fetch(`${feed}${feed.includes('?') ? '&' : '?'}${q}`, { cache: 'no-store', signal: ctl.signal })
     .then((r) => r.json())
     .then((j: { birthdays?: Birthday[]; error?: string }) => {
       if (j.error || !j.birthdays) throw new Error(j.error || 'no data')
@@ -124,6 +128,9 @@ const fromFeed = (params: URLSearchParams): void => {
       }
     })
     .then((list) => showFeed(list, show, range))
+    .finally(() => {
+      document.documentElement.dataset.state = 'ready'
+    })
 }
 
 const showFeed = (list: Birthday[], show: string, range: number): void => {
