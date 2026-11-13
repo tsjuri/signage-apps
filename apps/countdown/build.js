@@ -23,7 +23,7 @@ for (const w of [600, 800]) {
 copyFileSync('node_modules/@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2', join(DIST, 'fonts/bebas-400.woff2'))
 
 const backgrounds = existsSync(BACKGROUNDS)
-  ? readdirSync(BACKGROUNDS).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)).sort()
+  ? readdirSync(BACKGROUNDS).filter((f) => /\.(jpe?g|png|webp|gif)$/i.test(f)).sort()
   : []
 const label = (f) => f.replace(/\.[a-z]+$/i, '').replace(/[-_]+/g, ' ').replace(/^./, (c) => c.toUpperCase())
 
