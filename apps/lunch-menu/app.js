@@ -295,7 +295,8 @@
         lastData = data
         if (!data.__sample) saveCache(data)
         render(currentDays, data)
-        status(data.__sample ? 'Sample menu — set a calendar in this app’s settings' : '')
+        $('sample-band').hidden = !data.__sample
+        status('')
       })
       .catch(function () {
         if (lastData) {
