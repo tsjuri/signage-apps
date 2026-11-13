@@ -29,7 +29,8 @@ built-in set in `apps/trivia-facts/data.js`, schools can add their own from a Go
 see `school-items-template.csv`), observances-sheet (shown as "Observances": heritage/awareness months, school weeks and days,
 one animated slide each, shown automatically when current; each school ticks, rewords and adds
 to them in its Google Sheet; template in `apps/observances-sheet/`; the slides themselves are in
-`shared/observances/data.js`, shared with trivia-facts and on-this-day), gallery (photos from a private Drive folder in a themed frame, by date or chosen;
+`shared/observances/data.js`, shared with trivia-facts and on-this-day), countdown (a poster counting down the days to an event, in the Gallery's themes or on a
+background photo from `media/backgrounds/`, which fills its Background dropdown), gallery (photos from a private Drive folder in a themed frame, by date or chosen;
 Halloween cute for elementary, spooky for middle/high; `apps/gallery/apps-script/Gallery.gs` serves the
 photos only with a secret key), learning-clock (an analog clock that teaches kids to read it: coloured hands, minute ring,
 "past"/"to" halves, the time in words and how to read each hand), on-this-day (138 built-in school-friendly facts in `apps/on-this-day/facts.js`, plus the school's

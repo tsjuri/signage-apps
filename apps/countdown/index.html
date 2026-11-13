@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Countdown</title>
+    <link rel="stylesheet" href="styles.css?v=__V__" />
+    <script src="themes.js?v=__V__" defer></script>
+    <script src="app.js?v=__V__" defer></script>
+  </head>
+  <body>
+    <main class="stage">
+      <div class="glow" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="decor decor--back" id="decor-back" aria-hidden="true"></div>
+      <section class="poster">
+        <div class="rule"></div>
+        <div class="main">
+          <h1 class="headline" id="headline"></h1>
+          <div class="divider"></div>
+          <div class="count">
+            <p class="count__num" id="num"></p>
+            <p class="count__unit" id="unit"></p>
+          </div>
+        </div>
+        <div class="rule"></div>
+        <div class="message" id="message"></div>
+        <div class="rule rule--short"></div>
+      </section>
+      <div class="decor decor--front" id="decor-front" aria-hidden="true"></div>
+    </main>
+  </body>
+</html>
