@@ -9,7 +9,8 @@
  *   theme      auto (by the target's month) | halloween | fall | thanksgiving | winter |
  *              valentines | spring | summer | endofyear | plain
  *   audience   elementary | secondary (Halloween: cute or spooky)
- *   background a file in the site's media/backgrounds/ folder (empty = the theme's drawings)
+ *   background a file in the site's media/backgrounds/ folder (empty = the theme's colours)
+ *   nodrawings=true  leave out the theme's drawings (separate from the background)
  *   motion     gentle (default) | full | none
  *   date       YYYY-MM-DD: pretend today is another day (testing)
  *
@@ -76,11 +77,11 @@
     lines(document.getElementById('message'), get('message'), 'p')
     var bg = get('background')
     if (bg && bg !== 'none') {
-      // A photo background: the theme keeps its colours, the drawings step aside.
+      // A photo background; the theme keeps its colours for the text and rules.
       document.documentElement.classList.add('has-photo')
       document.querySelector('.stage').style.backgroundImage = 'url("../media/backgrounds/' + encodeURIComponent(bg) + '")'
-      return
     }
+    if (/^(1|true|yes)$/i.test(get('nodrawings'))) return
     var back = document.getElementById('decor-back')
     var front = document.getElementById('decor-front')
     // The Gallery's decorations, pushed out to the side margins and a bit

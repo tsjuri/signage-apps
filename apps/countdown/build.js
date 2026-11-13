@@ -55,11 +55,12 @@ const manifest = {
       background: {
         type: 'string',
         title: 'Background',
-        description: 'Theme drawings, or a photo from the media/backgrounds folder.',
+        description: 'The theme’s colours, or a photo or GIF from the media/backgrounds folder.',
         default: '',
         enum: ['', ...backgrounds],
-        'x-enumLabels': ['Theme drawings', ...backgrounds.map(label)]
+        'x-enumLabels': ['Theme colours', ...backgrounds.map(label)]
       },
+      nodrawings: { type: 'boolean', title: 'Hide the theme drawings', description: 'Leave out the turkeys, leaves, snowmen… e.g. when the background photo says enough.', default: false },
       audience: {
         type: 'string',
         title: 'Audience',
@@ -80,7 +81,7 @@ const manifest = {
   },
   launch: {
     baseUrl: 'https://example.invalid/countdown/',
-    template: '{?target,headline,message,time,arrived,theme,background,audience,motion,date}'
+    template: '{?target,headline,message,time,arrived,theme,background,nodrawings,audience,motion,date}'
   }
 }
 writeFileSync(join(DIST, '.well-known/signage-app.json'), `${JSON.stringify(manifest, null, 2)}\n`)

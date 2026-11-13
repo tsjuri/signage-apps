@@ -54,6 +54,6 @@ html:not([data-state]) .stage { opacity: 0; }
 
 /* a background photo, washed darker towards the middle so the text stays readable */
 .has-photo .stage { background-size: cover; background-position: center; }
-.has-photo .stage::before { content: ''; position: absolute; inset: 0; z-index: 1;
+.has-photo .stage::before { content: ''; position: absolute; inset: 0; z-index: 0;
   background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.38) 100%); }
 .has-photo .glow { display: none; }
