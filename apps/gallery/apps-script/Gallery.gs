@@ -6,10 +6,19 @@
 // photos, but only when the request carries the secret KEY below. Without it,
 // it returns nothing. Change the KEY (and the app's setting) any time.
 //
+// Folders: ONE parent folder, e.g. "Gallery", with a subfolder per gallery:
+//   Gallery/
+//     Halloween/        <- photos
+//     Field trip/       <- photos
+// In Anthias, each Gallery asset names its subfolder in its "Folder" setting
+// (e.g. Halloween). A new gallery is just a new subfolder: no script changes.
+// Photos directly in the parent folder are shown when "Folder" is left empty.
+//
 // Setup (once)
-//   1. In Google Drive (preferably a separate "signage" account), make a folder,
-//      e.g. "Gallery – Halloween". Open it; the folder ID is the last part of
-//      the address: drive.google.com/drive/folders/<THIS PART>. Paste it below.
+//   1. In Google Drive (preferably a separate "signage" account), make the
+//      parent folder and share it only with the people who add photos. Open
+//      it; its ID is the last part of the address:
+//      drive.google.com/drive/folders/<THIS PART>. Paste it below.
 //   2. Make up a KEY below: a long random word, e.g. from a password generator.
 //   3. https://script.google.com → New project "School Gallery". Replace the
 //      code with this whole file. Save.
@@ -20,18 +29,12 @@
 //   5. In Anthias: Add → Apps → Gallery. Paste the URL into "Photo feed URL"
 //      and the KEY into "Secret key".
 //
-// One script can serve several folders: add them to FOLDERS with a short name,
-// and put that name in the app's "Folder" setting (empty = the first one).
-//
 // After changing this code: Deploy → Manage deployments → pencil → Version:
 // New version → Deploy. The URL stays the same.
 //
 // Test in a browser:  <URL>?key=<KEY>&list=1
 
-const FOLDERS = {
-  halloween: 'PASTE-THE-FOLDER-ID-HERE'
-  // fieldtrip: 'ANOTHER-FOLDER-ID',
-}
+const PARENT_FOLDER_ID = 'PASTE-THE-PARENT-FOLDER-ID-HERE'
 const KEY = 'CHANGE-ME-TO-A-LONG-RANDOM-WORD'
 
 const WIDTH = 1600 // px wide copies; plenty for a 1080p screen
@@ -40,10 +43,23 @@ const MAX_PHOTOS = 200
 function doGet(e) {
   const p = (e && e.parameter) || {}
   if (!KEY || KEY.indexOf('CHANGE-ME') === 0 || p.key !== KEY) return json({ error: 'not allowed' })
-  const folderId = FOLDERS[p.folder] || FOLDERS[Object.keys(FOLDERS)[0]]
-  if (!folderId) return json({ error: 'no folder' })
+  const folderId = findFolder(p.folder)
+  if (!folderId) return json({ error: 'no folder named "' + (p.folder || '') + '"' })
   if (p.photo) return photo(folderId, p.photo)
   return list(folderId)
+}
+
+// The parent folder itself (empty name), or its subfolder with that name
+// (not case-sensitive). Never anything outside the parent folder.
+function findFolder(name) {
+  name = String(name || '').trim().toLowerCase()
+  if (!name) return PARENT_FOLDER_ID
+  const it = DriveApp.getFolderById(PARENT_FOLDER_ID).getFolders()
+  while (it.hasNext()) {
+    const f = it.next()
+    if (f.getName().trim().toLowerCase() === name) return f.getId()
+  }
+  return ''
 }
 
 // The photos in the folder: id, name and last change, sorted by name.

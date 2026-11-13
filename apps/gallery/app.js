@@ -4,7 +4,7 @@
  * URL settings (Anthias builds them from the app's settings form):
  *   source     the School Gallery Apps Script URL (…/exec)
  *   key        its secret key
- *   folder     which of the script's folders (empty = its first one)
+ *   folder     the name of a subfolder of the script's Gallery folder (empty = the folder itself)
  *   title      the big title (empty = the theme's own, e.g. "Halloween Gallery")
  *   theme      auto (by date) | halloween | fall | thanksgiving | winter |
  *              valentines | spring | summer | endofyear | plain

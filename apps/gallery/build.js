@@ -38,7 +38,7 @@ const manifest = {
         'x-widget': 'url'
       },
       key: { type: 'string', title: 'Secret key', description: 'The KEY from the script.', 'x-widget': 'text' },
-      folder: { type: 'string', title: 'Folder', description: 'Optional: the folder’s short name from the script’s FOLDERS list. Empty = its first folder.', 'x-widget': 'text' },
+      folder: { type: 'string', title: 'Folder', description: 'The name of this gallery’s subfolder in the Gallery folder on Drive, e.g. Halloween. Empty = the photos directly in the Gallery folder.', 'x-widget': 'text' },
       title: { type: 'string', title: 'Title', description: 'Leave empty for the theme’s own, e.g. “Halloween Gallery”.', 'x-widget': 'text' },
       theme: {
         type: 'string',
