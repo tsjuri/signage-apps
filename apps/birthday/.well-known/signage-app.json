@@ -87,11 +87,13 @@
         "default": "first",
         "enum": [
           "first",
-          "initial"
+          "initial",
+          "full"
         ],
         "x-enumLabels": [
           "First name (Maria)",
-          "First name and initial (Maria G.)"
+          "First name and initial (Maria G.)",
+          "Full name (Maria Garcia)"
         ]
       },
       "message": {

@@ -2,9 +2,9 @@
 // app show today's and upcoming birthdays from a PRIVATE CSV on Google Drive.
 //
 // The CSV stays private in Drive. The script hands a screen only what it shows:
-// a first name (optionally with the last initial) and the month and day,
-// never the year, the age, the full name or the student number. And only with
-// the secret KEY below.
+// a name (first name, first name + last initial, or full name, as the app's
+// "Names as" setting asks) and the month and day; never the year, the age or
+// the student number. And only with the secret KEY below.
 //
 // The CSV (the student system's export) needs a header line with at least a
 // first name and a birthdate column; these are recognised:
@@ -45,7 +45,7 @@ function doGet(e) {
   const tz = Session.getScriptTimeZone()
   const start = /^\d{4}-\d{2}-\d{2}$/.test(p.from || '') ? ymdDate(p.from) : ymdDate(Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd'))
   const days = Math.max(0, Math.min(MAX_DAYS, parseInt(p.days, 10) || 0))
-  const initial = p.names === 'initial'
+  const style = p.names === 'initial' || p.names === 'full' ? p.names : 'first'
 
   const people = readCsv(csv)
   const out = []
@@ -57,7 +57,7 @@ function doGet(e) {
     const leapless = m === 2 && day === 28 && new Date(d.getFullYear(), 1, 29).getMonth() !== 1
     people.forEach(function (s) {
       if (s.m === m && (s.d === day || (leapless && s.d === 29))) {
-        out.push({ date: Utilities.formatDate(d, tz, 'yyyy-MM-dd'), name: s.first + (initial && s.last ? ' ' + s.last.charAt(0).toUpperCase() + '.' : '') })
+        out.push({ date: Utilities.formatDate(d, tz, 'yyyy-MM-dd'), name: s.first + (!s.last ? '' : style === 'full' ? ' ' + s.last : style === 'initial' ? ' ' + s.last.charAt(0).toUpperCase() + '.' : '') })
       }
     })
   }
