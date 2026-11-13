@@ -115,9 +115,17 @@ function writeManifest(id, src, out) {
       enum: ['', ...BACKGROUNDS],
       'x-enumLabels': ['The app’s own', ...BACKGROUNDS.map((f) => f.replace(/\.[a-z]+$/i, '').replace(/[-_]+/g, ' ').replace(/^./, (c) => c.toUpperCase()))]
     }
+    // trivia-facts: a second background, for the fun facts
+    if (id === 'trivia-facts') {
+      const bgSetting = clean.settings.properties.background
+      bgSetting.title = 'Background for quiz questions'
+      bgSetting.description = 'A photo or GIF from the media/backgrounds folder. If only one of the two is set, it is used for both.'
+      clean.settings.properties.background2 = { ...bgSetting, title: 'Background for fun facts', enum: [...bgSetting.enum], 'x-enumLabels': [...bgSetting['x-enumLabels']] }
+    }
     clean.launch = clean.launch || {}
     const t = clean.launch.template
-    clean.launch.template = t ? t.replace(/\}$/, ',background}') : '{?background}'
+    const extra = id === 'trivia-facts' ? 'background,background2' : 'background'
+    clean.launch.template = t ? t.replace(/\}$/, ',' + extra + '}') : '{?' + extra + '}'
   }
   // Anthias names a new asset after the label of the first dropdown with
   // x-enumLabels (meant for the RSS Reader's feed), so "On This Day" became

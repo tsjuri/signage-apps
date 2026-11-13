@@ -263,6 +263,8 @@
     if (!items.length) return
     index = ((i % items.length) + items.length) % items.length
     var built = buildSlide(items[index], dayNumber() * 131 + index)
+    // Background photos (if set): one for quiz questions, one for fun facts.
+    if (window.signageBackground) window.signageBackground(items[index].kind === 'trivia' ? 'background' : 'background2')
     stage.appendChild(built.slide)
     fitTitle(built)
     setTimeout(function () { built.slide.classList.add('is-on') }, 40)

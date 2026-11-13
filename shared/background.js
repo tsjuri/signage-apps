@@ -4,12 +4,17 @@
  * made see-through, the image goes behind them, and a wash (dark behind light
  * text, light behind dark text) keeps the text readable. */
 ;(function () {
-  var file = new URLSearchParams(location.search).get('background')
+  var q = new URLSearchParams(location.search)
+  // background2 is an app's second background (e.g. trivia-facts: facts);
+  // either one alone is used for everything.
+  var file = q.get('background') || q.get('background2')
   if (!file) return
   var root = document.documentElement
   var bg = document.createElement('div')
   bg.id = 'signage-bg'
-  bg.style.cssText = 'position:fixed;inset:0;z-index:-1;pointer-events:none;background:#000 center/cover no-repeat;background-image:url("../media/backgrounds/' + encodeURIComponent(file) + '")'
+  bg.style.cssText = 'position:fixed;inset:0;z-index:-1;pointer-events:none;background:#000 center/cover no-repeat'
+  var setImage = function (f) { bg.style.backgroundImage = 'url("../media/backgrounds/' + encodeURIComponent(f) + '")' }
+  setImage(file)
   var wash = document.createElement('div')
   wash.style.cssText = 'position:absolute;inset:0'
   bg.appendChild(wash)
@@ -51,6 +56,14 @@
     wash.style.background = lum(text) > 0.55
       ? 'radial-gradient(ellipse 75% 75% at 50% 50%, rgba(0,0,0,.6), rgba(0,0,0,.35))'
       : 'radial-gradient(ellipse 75% 75% at 50% 50%, rgba(255,255,255,.72), rgba(255,255,255,.45))'
+  }
+  // An app with two backgrounds switches with this, per slide:
+  // signageBackground('background2') or signageBackground('background').
+  window.signageBackground = function (which) {
+    var f = q.get(which) || file
+    setImage(f)
+    clear()
+    setTimeout(clear, 100)
   }
   // Apps draw at different moments; check a few times.
   clear()
